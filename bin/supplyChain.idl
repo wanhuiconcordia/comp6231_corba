@@ -1,0 +1,85 @@
+
+module tools{
+	valuetype Product{
+		private long productID; 
+		private string manufacturerName;
+		private string productType;
+		private float unitPrice;
+	
+		boolean isSame(in Product otherProduct);
+		string getManufacturerName();
+		string getProductType();
+		float getUnitPrice();
+	};
+
+	valuetype Item:Product{
+		private long quantity;
+		long getQuantity();
+		void setQuantity(in long q);
+		Product cloneProduct();
+		boolean isSameProductAs(in Item otherItem);
+	};
+
+	valuetype ItemShippingStatus:Item{
+		private boolean shippingStatus;
+	};
+
+	valuetype Customer{
+		private long customerReferenceNumber;
+		private string name;
+		private string password;
+		private string street1;
+		private string street2;
+		private string city;
+		private string state;
+		private string zip;
+		private string country;
+		string getName();
+		string getPassword();
+		long getCustomerReferenceNumber();
+	};
+
+	valuetype SignUpResult{
+		public boolean result;
+		public long customerReferenceNumber;
+		public string message;
+	};
+
+	typedef sequence<Item> ItemList;
+
+	typedef sequence<ItemShippingStatus> ItemShippingStatusList;
+
+	typedef sequence<Product> ProductList;
+};
+
+module retailer{
+	interface Retailer{
+		tools::ItemList getCatalog(in long customerReferenceNumber);
+		tools::ItemShippingStatusList submitOrder(in long customerReferenceNumber, in tools::ItemList itemList);
+		tools::SignUpResult signUp(in string name, in string password, in string street1, 
+			in string street2, in string city, in string state, in string zip, in string country);
+		tools::Customer signIn(in long customerReferenceNumber,in string password);
+		tools::ItemList getProducts(in string productID);
+	};
+};
+
+module warehouse{
+	interface Warehouse{
+		tools::ItemList getProductsByID(in string productID);// get the specific product by id, if null/empty, all returned
+		tools::ItemList getProductsByType(in string productType);// get a list of products by product type, if null/mpty,all returned
+		tools::ItemList getProductsByRegisteredManufacturers(in string manufacturerName);//get a list of products by manufacturer name,if null/empty, all returned
+		tools::ItemList getProducts(in string productID, in string manufacturerName);
+		boolean registerRetailer( in string retailerName);
+		boolean unregisterRegailer(in string regailerName);
+	};
+};
+
+module manufacturer{
+	interface Manufacturer{
+		string processPurchaseOrder(in tools::Item item);
+		tools::Product getProductInfo(in string aProdName);
+		boolean receivePayment(in string orderNum, in float totalPrice);
+	 	tools::ProductList getProductList();
+	};
+};
+
