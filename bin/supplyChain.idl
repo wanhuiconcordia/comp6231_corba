@@ -5,8 +5,6 @@ module tools{
 		public string manufacturerName;
 		public string productType;
 		public float unitPrice;
-	
-		boolean isSame(in Product otherProduct);
 	};
 
 	valuetype Item:Product{
