@@ -48,6 +48,7 @@ module retailer{
 			in string street2, in string city, in string state, in string zip, in string country);
 		tools::Customer signIn(in long customerReferenceNumber,in string password);
 		tools::ItemList getProducts(in string productID);
+		oneway void shutdown();
 	};
 };
 
@@ -60,6 +61,7 @@ module warehouse{
 		boolean registerRetailer(in string retailerName);
 		boolean unregisterRegailer(in string retailerName);
 		tools::ItemList shippingGoods(in tools::ItemList itemList);
+		oneway void shutdown();
 	};
 };
 
@@ -69,6 +71,7 @@ module manufacturer{
 		tools::Product getProductInfo(in string aProdName);
 		boolean receivePayment(in string orderNum, in float totalPrice);
 	 	tools::ProductList getProductList();
+		oneway void shutdown();
 	};
 };
 
