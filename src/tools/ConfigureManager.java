@@ -80,7 +80,7 @@ public class ConfigureManager {
 			bRet = true;
 		} catch (FileNotFoundException e) {
 			System.out.println(fileName + " cannot be found!");
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

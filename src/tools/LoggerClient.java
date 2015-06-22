@@ -30,7 +30,8 @@ public class LoggerClient {
 			connected = true;
 		} catch (IOException e) {
 			connected = false;
-			e.printStackTrace();
+			System.out.println("Failed to connect to connect to LoggerServer.");
+//			e.printStackTrace();
 		}
 	}
 

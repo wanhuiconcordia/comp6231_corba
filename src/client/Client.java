@@ -47,10 +47,11 @@ public class Client
 	}
 	public boolean connectRetailer(){
 
+		System.out.print("Please input retailer name to establish connection:");
 		String retailerName = in.next();
 		try {
 			retailer = RetailerHelper.narrow(namingContextRef.resolve_str(retailerName));
-			System.out.println("Obtained a handle on server object: " + retailer);
+			System.out.println("Obtained a handle on server object: " + retailerName);
 			return true;
 		} catch (NotFound | CannotProceed
 				| org.omg.CosNaming.NamingContextPackage.InvalidName e) {

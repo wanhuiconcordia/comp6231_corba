@@ -124,9 +124,11 @@ public class RetailerServer {
 			//Use NamingContextExt which is part of the Interoperable. Naming Service (INS) specification.
 			namingContextRef = NamingContextExtHelper.narrow(objRef);
 
+			System.out.print("Input the name of current retailer:");
 			name = in.next();
 			NameComponent path[] = namingContextRef.to_name(name);
 			namingContextRef.rebind(path, retailerRef);
+			System.out.println(name + " is registered.");
 			return true;
 		} catch (InvalidName e) {
 			// TODO Auto-generated catch block
@@ -155,7 +157,7 @@ public class RetailerServer {
 			}else{
 				try {
 					warehouse = WarehouseHelper.narrow(namingContextRef.resolve_str(warehouseName));
-					System.out.println("Obtained a handle on server object: " + warehouse);
+					System.out.println("Obtained a handle on server object: " + warehouseName);
 					warehouseList.add(warehouse);
 				} catch (NotFound | CannotProceed
 						| org.omg.CosNaming.NamingContextPackage.InvalidName e) {
@@ -172,7 +174,7 @@ public class RetailerServer {
 			return;
 		}
 
-		if(retailerServer.registerRetailer()){
+		if(!retailerServer.registerRetailer()){
 			return;
 		}
 
