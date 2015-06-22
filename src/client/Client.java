@@ -1,7 +1,5 @@
 package client;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Scanner;
 
 import tools.*;
@@ -16,14 +14,14 @@ import org.omg.CORBA.ORBPackage.InvalidName;
 public class Client
 {
 	private Retailer retailer;
-	private static NamingContextExt ncRef;
+	private NamingContextExt namingContextRef;
 	private Scanner in;
 	private CustomerImpl currentCustomer;
 	private LoggerClient loggerClient;
 	private String name;
 	private ArrayList<ItemImpl> retailerItemCatalog;
 
-	static boolean initializeOrbEnvirement(String args[]){
+	boolean initializeOrbEnvirement(String args[]){
 		// create and initialize the ORB
 		ORB orb = ORB.init(args, null);
 
@@ -32,7 +30,7 @@ public class Client
 			org.omg.CORBA.Object objRef;
 			objRef = orb.resolve_initial_references("NameService");
 			// Use NamingContextExt instead of NamingContext. This is part of the Interoperable naming Service.  
-			ncRef = NamingContextExtHelper.narrow(objRef);
+			namingContextRef = NamingContextExtHelper.narrow(objRef);
 			return true;
 		} catch (InvalidName e) {
 			System.out.println("Failed to resolve NameService!");
@@ -47,11 +45,11 @@ public class Client
 		loggerClient = new LoggerClient();
 		retailerItemCatalog = new ArrayList<ItemImpl>();
 	}
-	public boolean addRetailer(){
+	public boolean connectRetailer(){
 
 		String retailerName = in.next();
 		try {
-			retailer = RetailerHelper.narrow(ncRef.resolve_str(retailerName));
+			retailer = RetailerHelper.narrow(namingContextRef.resolve_str(retailerName));
 			System.out.println("Obtained a handle on server object: " + retailer);
 			return true;
 		} catch (NotFound | CannotProceed
@@ -244,12 +242,11 @@ public class Client
 
 	public static void main(String args[])
 	{
-		if(!initializeOrbEnvirement(args)){
+		Client client = new Client();
+		if(!client.initializeOrbEnvirement(args)){
 			return;
 		}
-
-		Client client = new Client();
-		if(!client.addRetailer()){
+		if(!client.connectRetailer()){
 			//TODO CLOSE ORB
 			return;
 		}
