@@ -1,42 +1,30 @@
 
 module tools{
 	valuetype Product{
-		private long productID; 
-		private string manufacturerName;
-		private string productType;
-		private float unitPrice;
-	
-		boolean isSame(in Product otherProduct);
-		string getManufacturerName();
-		string getProductType();
-		float getUnitPrice();
+		public long productID; 
+		public string manufacturerName;
+		public string productType;
+		public float unitPrice;
 	};
 
 	valuetype Item:Product{
-		private long quantity;
-		long getQuantity();
-		void setQuantity(in long q);
-		Product cloneProduct();
-		boolean isSameProductAs(in Item otherItem);
+		public long quantity;
 	};
 
 	valuetype ItemShippingStatus:Item{
-		private boolean shippingStatus;
+		public boolean shippingStatus;
 	};
 
 	valuetype Customer{
-		private long customerReferenceNumber;
-		private string name;
-		private string password;
-		private string street1;
-		private string street2;
-		private string city;
-		private string state;
-		private string zip;
-		private string country;
-		string getName();
-		string getPassword();
-		long getCustomerReferenceNumber();
+		public long customerReferenceNumber;
+		public string name;
+		public string password;
+		public string street1;
+		public string street2;
+		public string city;
+		public string state;
+		public string zip;
+		public string country;
 	};
 
 	valuetype SignUpResult{
@@ -60,6 +48,7 @@ module retailer{
 			in string street2, in string city, in string state, in string zip, in string country);
 		tools::Customer signIn(in long customerReferenceNumber,in string password);
 		tools::ItemList getProducts(in string productID);
+		oneway void shutdown();
 	};
 };
 
@@ -69,8 +58,10 @@ module warehouse{
 		tools::ItemList getProductsByType(in string productType);// get a list of products by product type, if null/mpty,all returned
 		tools::ItemList getProductsByRegisteredManufacturers(in string manufacturerName);//get a list of products by manufacturer name,if null/empty, all returned
 		tools::ItemList getProducts(in string productID, in string manufacturerName);
-		boolean registerRetailer( in string retailerName);
-		boolean unregisterRegailer(in string regailerName);
+		boolean registerRetailer(in string retailerName);
+		boolean unregisterRegailer(in string retailerName);
+		tools::ItemList shippingGoods(in tools::ItemList itemList);
+		oneway void shutdown();
 	};
 };
 
@@ -80,6 +71,7 @@ module manufacturer{
 		tools::Product getProductInfo(in string aProdName);
 		boolean receivePayment(in string orderNum, in float totalPrice);
 	 	tools::ProductList getProductList();
+		oneway void shutdown();
 	};
 };
 

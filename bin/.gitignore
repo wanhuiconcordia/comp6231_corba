@@ -1,2 +1,11 @@
+<<<<<<< HEAD
 /warehouse
 /manufacturer
+=======
+/manufacturer/
+/retailer/
+/supplyChain.idl
+/tools/
+/warehouse/
+/client/
+>>>>>>> branch 'master' of https://github.com/wanhuiconcordia/comp6231_corba.git
