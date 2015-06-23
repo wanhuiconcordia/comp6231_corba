@@ -17,14 +17,46 @@ import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 
-class RetailerImpl extends RetailerPOA {
+class RetailerServant extends RetailerPOA {
 	private ORB orb;
-
-	public void setORB(ORB orb_val) {
-		orb = orb_val; 
+	private ArrayList<Warehouse> warehouseList;
+	public RetailerServant(ORB orb){
+		this.orb = orb;
+		warehouseList = new ArrayList<Warehouse>();
 	}
 
-	// implement shutdown() method
+	public void connectWarehouses(Scanner in){
+		
+		try {
+			String warehouseName;
+			Warehouse warehouse; 
+			org.omg.CORBA.Object objRef;
+			objRef = orb.resolve_initial_references("NameService");
+			NamingContextExt namingContextRef = NamingContextExtHelper.narrow(objRef);
+			while(true){
+				System.out.print("Please input warehouse name to establish connection (q to finish):");
+				warehouseName = in.next();
+				if(warehouseName.equals("q")){
+					break;
+				}else{
+					try {
+						warehouse = WarehouseHelper.narrow(namingContextRef.resolve_str(warehouseName));
+						System.out.println("Obtained a handle on server object: " + warehouseName);
+						warehouseList.add(warehouse);
+					} catch (NotFound | CannotProceed
+							| org.omg.CosNaming.NamingContextPackage.InvalidName e) {
+						System.out.println("Failed to resolve warehouse:" + warehouseName);
+						//e.printStackTrace();
+					}
+				}
+			}
+
+		} catch (InvalidName e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	@Override
 	public void shutdown() {
 		orb.shutdown(false);
 	}
@@ -57,7 +89,7 @@ class RetailerImpl extends RetailerPOA {
 	}
 
 	@Override
-	public Item[] getProducts(String productID) {
+	public Item[] getProducts(int productID) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -67,19 +99,16 @@ class RetailerImpl extends RetailerPOA {
 public class RetailerServer {
 
 	private ORB orb;
-	private NamingContextExt namingContextRef;
-	private Retailer retailerRef;
+	private RetailerServant retailerServant;
 
 	private String name;
 	private Scanner in;
 	private LoggerClient loggerClient;
-	private ArrayList<Warehouse> warehouseList;
 
 	public RetailerServer(){
 		name = new String();
 		in = new Scanner(System.in);
 		loggerClient = new LoggerClient();
-		warehouseList = new ArrayList<Warehouse> ();
 	}
 
 	boolean initializeOrbEnvirement(String args[]){
@@ -92,12 +121,23 @@ public class RetailerServer {
 			rootpoa.the_POAManager().activate();
 
 			// create servant and register it with the ORB
-			RetailerImpl retailerImpl = new RetailerImpl();
-			retailerImpl.setORB(orb); 
+			retailerServant = new RetailerServant(orb);
 
 			// get object reference from the servant
-			org.omg.CORBA.Object ref = rootpoa.servant_to_reference(retailerImpl);
-			retailerRef = RetailerHelper.narrow(ref);
+			org.omg.CORBA.Object ref = rootpoa.servant_to_reference(retailerServant);
+			Retailer retailerRef = RetailerHelper.narrow(ref);
+			
+			org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+			//Use NamingContextExt which is part of the Interoperable. Naming Service (INS) specification.
+			NamingContextExt namingContextRef = NamingContextExtHelper.narrow(objRef);
+
+			System.out.print("Input the name of current retailer:");
+			name = in.next();
+			NameComponent path[] = namingContextRef.to_name(name);
+			namingContextRef.rebind(path, retailerRef);
+			System.out.println(name + " is registered.");
+			
+			
 			return true;
 
 		} catch (InvalidName e) {
@@ -112,27 +152,6 @@ public class RetailerServer {
 		} catch (WrongPolicy e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
-		return false;
-	}
-
-	public boolean registerRetailer(){
-
-		try {
-			// get the root naming context
-			org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
-			//Use NamingContextExt which is part of the Interoperable. Naming Service (INS) specification.
-			namingContextRef = NamingContextExtHelper.narrow(objRef);
-
-			System.out.print("Input the name of current retailer:");
-			name = in.next();
-			NameComponent path[] = namingContextRef.to_name(name);
-			namingContextRef.rebind(path, retailerRef);
-			System.out.println(name + " is registered.");
-			return true;
-		} catch (InvalidName e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (org.omg.CosNaming.NamingContextPackage.InvalidName e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -142,31 +161,10 @@ public class RetailerServer {
 		} catch (CannotProceed e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}		
 		return false;
 	}
 
-	public void connectWarehouses(){
-		String warehouseName;
-		Warehouse warehouse; 
-		while(true){
-			System.out.print("Please input warehouse name to establish connection (q to finish):");
-			warehouseName = in.next();
-			if(warehouseName.equals("q")){
-				break;
-			}else{
-				try {
-					warehouse = WarehouseHelper.narrow(namingContextRef.resolve_str(warehouseName));
-					System.out.println("Obtained a handle on server object: " + warehouseName);
-					warehouseList.add(warehouse);
-				} catch (NotFound | CannotProceed
-						| org.omg.CosNaming.NamingContextPackage.InvalidName e) {
-					System.out.println("Failed to resolve warehouse:" + warehouseName);
-					//e.printStackTrace();
-				}
-			}
-		}
-	}
 
 	public static void main(String args[]) {
 		RetailerServer retailerServer = new RetailerServer();
@@ -174,11 +172,7 @@ public class RetailerServer {
 			return;
 		}
 
-		if(!retailerServer.registerRetailer()){
-			return;
-		}
-
-		retailerServer.connectWarehouses();
+		retailerServer.retailerServant.connectWarehouses(retailerServer.in);
 
 		System.out.println("RetailerServer ready and waiting ...");
 		retailerServer.orb.run();

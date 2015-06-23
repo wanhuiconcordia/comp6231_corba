@@ -12,11 +12,11 @@ import org.omg.PortableServer.POAHelper;
 import manufacturer.*;
 import retailer.*;
 
-public class WareHouseServer {
+public class WarehouseServer {
 	String name;
 	private HashMap<String,Manufacturer> maufactures;
 	InventoryManager inventorymanager;
-	public WareHouseServer(){
+	public WarehouseServer(){
 		
 	}
 	
@@ -28,7 +28,7 @@ public class WareHouseServer {
 			ORB orb=ORB.init(args,null);
 			POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
 			rootpoa.the_POAManager().activate();
-			WareHouseServent warehouseimpl=new WareHouseServent(orb, name, maufactures);
+			WarehouseServant warehouseimpl=new WarehouseServant(orb, name, maufactures);
 			org.omg.CORBA.Object ref = rootpoa.servant_to_reference(warehouseimpl);
 			Warehouse wref=WarehouseHelper.narrow(ref);
 			org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");

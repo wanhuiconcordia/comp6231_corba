@@ -165,12 +165,11 @@ public class Client
 			System.out.println("This operation is only allowed for registed user. Please sign in or sign up.");
 		}else{
 			Item [] itemArray = retailer.getCatalog(currentCustomer.customerReferenceNumber);
+			retailerItemCatalog.clear();
 			if(itemArray == null){
 				System.out.println("Retailer return null");
-				retailerItemCatalog.clear();
 			}else if(itemArray.length == 0){
 				System.out.println("Retailer return null");
-				retailerItemCatalog.clear();
 			}else{
 				System.out.println("Retailer item catalog:");
 				for(Item item: itemArray){

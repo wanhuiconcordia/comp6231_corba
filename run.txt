@@ -1,0 +1,4 @@
+orbd -ORBInitialPort 1050 -ORBInitialHost localhost
+java retailer.RetailerServer -ORBInitialPort 1050 -ORBInitialHost localhost
+java client.Client -ORBInitialPort 1050 -ORBInitialHost localhost
+

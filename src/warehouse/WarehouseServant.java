@@ -16,7 +16,7 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import retailer.Retailer;
 import tools.Item;
 
-public class WareHouseServent extends WarehousePOA {
+public class WarehouseServant extends WarehousePOA {
 	
 	private ORB orb;
 	private InventoryManager inventoryManager;
@@ -24,7 +24,7 @@ public class WareHouseServent extends WarehousePOA {
 	private HashMap<String,Manufacturer> manufactures;
 	private ArrayList<String> retailers;
 	
-	public WareHouseServent(ORB orb2,String name,  HashMap<String,Manufacturer> manufactures){
+	public WarehouseServant(ORB orb2,String name,  HashMap<String,Manufacturer> manufactures){
 	
 		this.orb=orb2;
 		this.name=name;
@@ -183,5 +183,15 @@ public class WareHouseServent extends WarehousePOA {
 	public void shutdown() {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public Item[] getProductsByID(int productID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Item[] getProducts(int productID, String manufacturerName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
