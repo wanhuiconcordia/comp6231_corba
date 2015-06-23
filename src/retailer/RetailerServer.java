@@ -16,86 +16,6 @@ import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
-
-class RetailerServant extends RetailerPOA {
-	private ORB orb;
-	private ArrayList<Warehouse> warehouseList;
-	public RetailerServant(ORB orb){
-		this.orb = orb;
-		warehouseList = new ArrayList<Warehouse>();
-	}
-
-	public void connectWarehouses(Scanner in){
-		
-		try {
-			String warehouseName;
-			Warehouse warehouse; 
-			org.omg.CORBA.Object objRef;
-			objRef = orb.resolve_initial_references("NameService");
-			NamingContextExt namingContextRef = NamingContextExtHelper.narrow(objRef);
-			while(true){
-				System.out.print("Please input warehouse name to establish connection (q to finish):");
-				warehouseName = in.next();
-				if(warehouseName.equals("q")){
-					break;
-				}else{
-					try {
-						warehouse = WarehouseHelper.narrow(namingContextRef.resolve_str(warehouseName));
-						System.out.println("Obtained a handle on server object: " + warehouseName);
-						warehouseList.add(warehouse);
-					} catch (NotFound | CannotProceed
-							| org.omg.CosNaming.NamingContextPackage.InvalidName e) {
-						System.out.println("Failed to resolve warehouse:" + warehouseName);
-						//e.printStackTrace();
-					}
-				}
-			}
-
-		} catch (InvalidName e1) {
-			e1.printStackTrace();
-		}
-	}
-	
-	@Override
-	public void shutdown() {
-		orb.shutdown(false);
-	}
-
-	@Override
-	public Item[] getCatalog(int customerReferenceNumber) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ItemShippingStatus[] submitOrder(int customerReferenceNumber,
-			Item[] itemList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SignUpResult signUp(String name, String password, String street1,
-			String street2, String city, String state, String zip,
-			String country) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Customer signIn(int customerReferenceNumber, String password) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Item[] getProducts(int productID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-}
-
-
 public class RetailerServer {
 
 	private ORB orb;
@@ -121,7 +41,7 @@ public class RetailerServer {
 			rootpoa.the_POAManager().activate();
 
 			// create servant and register it with the ORB
-			retailerServant = new RetailerServant(orb);
+			retailerServant = new RetailerServant(orb,loggerClient);
 
 			// get object reference from the servant
 			org.omg.CORBA.Object ref = rootpoa.servant_to_reference(retailerServant);

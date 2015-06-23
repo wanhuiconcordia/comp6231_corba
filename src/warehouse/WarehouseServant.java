@@ -194,4 +194,11 @@ public class WarehouseServant extends WarehousePOA {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	/* (non-Javadoc)
+	 * @see warehouse.WarehouseOperations#getName()
+	 */
+	@Override
+	public String getName() {
+		return name;
+	}
 }

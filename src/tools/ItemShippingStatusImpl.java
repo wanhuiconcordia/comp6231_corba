@@ -5,6 +5,20 @@ public class ItemShippingStatusImpl extends ItemShippingStatus {
 
 	}
 	
+	/**
+	 * constructor
+	 * @param item
+	 * @param shippingStatus
+	 */
+	public ItemShippingStatusImpl(Item item, boolean shippingStatus) {
+		this.productID = item.productID;
+		this.manufacturerName = item.manufacturerName;
+		this.productType = item.productType;
+		this.unitPrice = item.unitPrice;
+		this.quantity = item.quantity;
+		this.shippingStatus = shippingStatus;
+	}
+	
 	public ItemShippingStatusImpl(String manufacturerName,
 			String productType,
 			float unitPrice,

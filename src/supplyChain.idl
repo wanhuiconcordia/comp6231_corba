@@ -61,6 +61,7 @@ module warehouse{
 		boolean registerRetailer(in string retailerName);
 		boolean unregisterRegailer(in string retailerName);
 		tools::ItemList shippingGoods(in tools::ItemList itemList);
+		string getName();
 		oneway void shutdown();
 	};
 };
