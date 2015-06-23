@@ -78,7 +78,12 @@ class RetailerServant extends RetailerPOA {
 	public Item[] getCatalog(int customerReferenceNumber) {
 		ArrayList<Item> allItems = new ArrayList<Item>();
 		HashMap<Integer, Item> itemsMap = new HashMap<Integer, Item>();
-
+		
+		Customer currentCustomer = customerManager.getCustomerByReferenceNumber(customerReferenceNumber);
+		if(currentCustomer == null){
+			loggerClient.write(name + ": customer reference number can not be found in customer database.");
+			return null;
+		}
 		for(int i = 0; i < warehouseList.size(); i++){
 			Item[] itemListFromWarehouse = warehouseList.get(i).getProducts(0, "");
 			for(Item item: itemListFromWarehouse){
@@ -91,12 +96,14 @@ class RetailerServant extends RetailerPOA {
 				}
 			}
 		}
+		
 
 		for(Item item: itemsMap.values()){
 			allItems.add(item);
 		}
 		return (Item[]) allItems.toArray();
 	}
+		
 
 	@Override
 	public ItemShippingStatus[] submitOrder(int customerReferenceNumber,
@@ -204,8 +211,26 @@ class RetailerServant extends RetailerPOA {
 
 	@Override
 	public Item[] getProducts(int productID) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Item> allItems = new ArrayList<Item>();
+		HashMap<Integer, Item> itemsMap = new HashMap<Integer, Item>();
+
+		for(int i = 0; i < warehouseList.size(); i++){
+			Item[] itemListFromWarehouse = warehouseList.get(i).getProductsByID(productID);
+			for(Item item: itemListFromWarehouse){
+				int key = item.productID;
+				Item itemInMap = itemsMap.get(key); 
+				if(itemInMap == null){
+					itemsMap.put(key, item);// item.clone() changes to item ?
+				}else{
+					itemInMap.quantity = itemInMap.quantity + item.quantity;
+				}
+			}
+		}
+
+		for(Item item: itemsMap.values()){
+			allItems.add(item);
+		}
+		return (Item[]) allItems.toArray();
 	}
 	/**
 	 * get a random order for number between 1 to count
