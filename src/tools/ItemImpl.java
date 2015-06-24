@@ -1,10 +1,12 @@
 package tools;
 
-public class ItemImpl extends Item {
+import org.dom4j.Element;
+import org.dom4j.tree.DefaultElement;
+
+public class ItemImpl extends ProductImpl {
 	
-	public ItemImpl(){
-		
-	}
+	protected static final long serialVersionUID = -1927708729616470764L;
+	public int quantity;
 
 	public ItemImpl(String manufacturerName,
 			String productType,
@@ -39,6 +41,10 @@ public class ItemImpl extends Item {
 		this.quantity = item.quantity;
 	}
 	
+	public ItemImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String toString(){
 		return productID
 				+ ", " + manufacturerName
@@ -49,5 +55,58 @@ public class ItemImpl extends Item {
 	
 	public ItemImpl clone(){
 		return new ItemImpl(productID, manufacturerName, productType, unitPrice, quantity);
+	}
+	
+	/**
+	 * @return the clone product from the current item 
+	 */
+	public Product cloneProduct(){
+		return super.clone();
+	}
+	
+	/**
+	 * @return quantity of the item
+	 */
+	public int getQuantity(){
+		return quantity;
+	}
+	
+	/**
+	 * @param q
+	 */
+	public void setQuantity(int q){
+		quantity = q;
+	}
+	
+	
+	/**
+	 * determine whether the current item is the same as the other item
+	 * @param otherItem
+	 * @return ture if the same, false if not
+	 */
+	public boolean isSameProductAs(Item otherItem){
+		return (this.manufacturerName.equals(otherItem.manufacturerName))
+				&& (this.productType.equals(otherItem.productType))
+				&& (this.unitPrice == otherItem.unitPrice);
+	}
+	/**
+	 * save the current item to an  Element object
+	 * @return the Element object
+	 */
+	public Element toXmlElement() {
+		DefaultElement customerElem = new DefaultElement("item");
+		
+		Element subElem = customerElem.addElement("manufacturerName");
+		subElem.setText(manufacturerName);
+		
+		subElem = customerElem.addElement("productType");
+		subElem.setText(productType);
+		
+		subElem = customerElem.addElement("unitPrice");
+		subElem.setText(String.valueOf(unitPrice));
+		
+		subElem = customerElem.addElement("quantity");
+		subElem.setText(String.valueOf(quantity));
+		return customerElem;
 	}
 }

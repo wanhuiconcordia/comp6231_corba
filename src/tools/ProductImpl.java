@@ -33,6 +33,45 @@ public class ProductImpl extends Product {
 		this.unitPrice = product.unitPrice;
 	}
 	
+	/**
+	 * determine if the current product is the same as the other one
+	 * @param otherProduct
+	 * @return true if the same, false if not
+	 */
+	public boolean isSame(Product otherProduct){
+		return (manufacturerName == otherProduct.manufacturerName)
+				&& (productType == otherProduct.productType)
+				&& (unitPrice == otherProduct.unitPrice);
+	}
+	
+	/**
+	 * @return manufacturer name
+	 */
+	public String getManufacturerName(){
+		return manufacturerName;
+	}
+	
+	/**
+	 * @return product type
+	 */
+	public String getProductType(){
+		return productType;
+	}
+	
+	/**
+	 * @return
+	 */
+	public float getUnitPrice(){
+		return unitPrice;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public Product clone(){
+		return new ProductImpl(this);
+	}
+	
 	public String toString(){
 		return productID
 				+ ", " + manufacturerName
