@@ -46,6 +46,8 @@ public class WarehouseServant extends WarehousePOA {
 				}
 			}
 			replenish();
+		}else{
+			inventoryManager=new InventoryManager(name);
 		}
 
 	}
