@@ -16,7 +16,7 @@ public class InventoryManager {
 	public InventoryManager(String name){
 		
 		inventoryItemMap = new HashMap<String, Item>();
-		this.warehouseName = warehouseName;
+		this.warehouseName = name;
 		loadItems();
 		
 	}

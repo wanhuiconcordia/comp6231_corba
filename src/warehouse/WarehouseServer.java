@@ -1,5 +1,4 @@
 package warehouse;
-import java.util.HashMap;
 import java.util.Scanner;
 
 import org.omg.CORBA.ORB;
@@ -9,12 +8,10 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
 
-import manufacturer.*;
-
 public class WarehouseServer {
-	static String name;
-
-	InventoryManager inventorymanager;
+	private String name;
+	private WarehouseServant warehouseServant;
+	
 	public WarehouseServer(){
 		Scanner in=new Scanner(System.in);
 		System.out.println("Enter name of the warehouse");
@@ -28,8 +25,8 @@ public class WarehouseServer {
 
 			POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
 			rootpoa.the_POAManager().activate();
-			WarehouseServant warehouseimpl=new WarehouseServant(orb, name);
-			org.omg.CORBA.Object ref = rootpoa.servant_to_reference(warehouseimpl);
+			warehouseServant=new WarehouseServant(orb, name);
+			org.omg.CORBA.Object ref = rootpoa.servant_to_reference(warehouseServant);
 			Warehouse wref=WarehouseHelper.narrow(ref);
 			org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
 			NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);

@@ -31,7 +31,9 @@ public class WarehouseServant extends WarehousePOA {
 	public WarehouseServant(ORB orb2,String name){
 		this.orb=orb2;
 		this.name=name;
+		manufactures = new HashMap<String, Manufacturer>();
 		if(connect(name)){
+			
 			inventoryManager=new InventoryManager(name);
 			for(Manufacturer manufact: manufactures.values()){
 				Product[] productList = manufact.getProductList();
@@ -45,6 +47,8 @@ public class WarehouseServant extends WarehousePOA {
 					}
 				}
 			}
+			
+			
 			replenish();
 		}else{
 			inventoryManager=new InventoryManager(name);
@@ -52,11 +56,15 @@ public class WarehouseServant extends WarehousePOA {
 
 	}
 	public void replenish(){
+		
 		for(Item item: inventoryManager.inventoryItemMap.values()){
+//			System.out.println(
 			if(item.quantity < minimumquantity){
+				System.out.println("products of :"+item.manufacturerName);
 				Manufacturer manufacturer = manufactures.get(item.manufacturerName);
-
+				
 				if(manufacturer == null){
+					System.out.println("failed to get manufacturers");
 					loggerClient.write(name + ": Failed to get manufactorer from manufactures!");
 				}else{
 					Item orderItem = new ItemImpl(item.manufacturerName,item.productType,item.unitPrice,item.quantity);
@@ -64,12 +72,17 @@ public class WarehouseServant extends WarehousePOA {
 					int oneTimeOrderCount = 40;
 					orderItem.quantity=oneTimeOrderCount;
 					String orderNum = manufacturer.processPurchaseOrder(orderItem);
+					System.out.println("returned order item");
 					if(orderNum == null){
+						System.out.println("returned order item");
 						loggerClient.write(name + ": manufacturer.processPurchaseOrder return null!");
 					}else{
 						if(manufacturer.receivePayment(orderNum, orderItem.unitPrice * orderItem.quantity)){
 							item.quantity=item.quantity + oneTimeOrderCount;
+							
+							System.out.println("item added to inventory");
 							inventoryManager.saveItems();
+							
 						}else{
 							loggerClient.write(name + ": manufacturer.receivePayment return null!");
 						}
@@ -99,14 +112,14 @@ public class WarehouseServant extends WarehousePOA {
 				}
 				else{
 					try{
-						manufacturerinterf	= ManufacturerHelper.narrow(ncRef.resolve_str(name));
+						manufacturerinterf	= ManufacturerHelper.narrow(ncRef.resolve_str(manufacturename));
 						manufactures.put(manufacturename,manufacturerinterf);
 						connected=true;
 
 					}catch (Exception e){
 
 						System.out.println("cannot connect to the manufacture try again");
-						// e.printStackTrace(System.out);
+//						 e.printStackTrace(System.out);
 
 					}
 				}

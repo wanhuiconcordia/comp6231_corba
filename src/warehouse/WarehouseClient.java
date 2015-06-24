@@ -78,11 +78,13 @@ public class WarehouseClient {
 	private void testGetProductsById(){
 		System.out.println("Please input product ID:");
 		int productID = in.nextInt();
-		ItemImpl[] itemImpls = (ItemImpl[])warehouse.getProductsByID(productID);
-
-		for(ItemImpl itemImpl: itemImpls){
-			System.out.println(itemImpl.toString());
-		}
+		Item[] items = warehouse.getProductsByID(productID);
+		System.out.println("There are " + items.length + " items");
+//		ItemImpl[] itemImpls = (ItemImpl[])warehouse.getProductsByID(productID);
+//
+//		for(ItemImpl itemImpl: itemImpls){
+//			System.out.println(itemImpl.toString());
+//		}
 	}
 
 	private void testGetProductsByType(){
