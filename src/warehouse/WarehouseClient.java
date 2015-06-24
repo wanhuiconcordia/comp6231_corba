@@ -15,6 +15,7 @@ import retailer.RetailerHelper;
 import tools.CustomerImpl;
 import tools.Item;
 import tools.ItemImpl;
+import tools.ItemShippingStatusImpl;
 import tools.LoggerClient;
 
 public class WarehouseClient {
@@ -48,41 +49,42 @@ public class WarehouseClient {
 		in = new Scanner(System.in);
 		loggerClient = new LoggerClient();
 	}
-	
+
 	public boolean connectWarehouse(){
 
 		System.out.print("Please input warehouse name to establish connection:");
 		String warehouseName = in.next();
-		
-			try {
-				warehouse = WarehouseHelper.narrow(namingContextRef.resolve_str(warehouseName));
-				System.out.println("Obtained a handle on server object: " + warehouseName);
-				return true;
-			} catch (NotFound e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (CannotProceed e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (org.omg.CosNaming.NamingContextPackage.InvalidName e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		
-		
-			System.out.println("Failed to resolve retailer:" + warehouseName);
-			return false;
+
+		try {
+			warehouse = WarehouseHelper.narrow(namingContextRef.resolve_str(warehouseName));
+			System.out.println("Obtained a handle on server object: " + warehouseName);
+			return true;
+		} catch (NotFound e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CannotProceed e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (org.omg.CosNaming.NamingContextPackage.InvalidName e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+		System.out.println("Failed to resolve retailer:" + warehouseName);
+		return false;
 	}
-	
+
 	private void testGetProductsById(){
 		System.out.println("Please input product ID:");
 		int productID = in.nextInt();
 		ItemImpl[] itemImpls = (ItemImpl[])warehouse.getProductsByID(productID);
+
 		for(ItemImpl itemImpl: itemImpls){
 			System.out.println(itemImpl.toString());
 		}
 	}
-	
+
 	private void testGetProductsByType(){
 		System.out.println("Please input product type:");
 		String productType = in.next();
@@ -91,7 +93,7 @@ public class WarehouseClient {
 			System.out.println(itemImpl.toString());
 		}
 	}
-	
+
 	private void testGetProductsByManufactureId(){
 		System.out.println("Please input manufacture ID:");
 		String manufactureID = in.next();
@@ -100,7 +102,7 @@ public class WarehouseClient {
 			System.out.println(itemImpl.toString());
 		}
 	}
-	
+
 	private void testGetProductsPerManufacturer(){
 		System.out.println("Please input manufacturer ID:");
 		String manufacturerID = in.next();
@@ -111,7 +113,7 @@ public class WarehouseClient {
 			System.out.println(itemImpl.toString());
 		}
 	}
-	
+
 	private void testRegisteringRetailer(){
 		System.out.println("Will register:" + name);
 		if(warehouse.registerRetailer(name)){
@@ -120,7 +122,7 @@ public class WarehouseClient {
 			System.out.println("Failed to do registration.");
 		}
 	}
-	
+
 	private void testUnregisteringRetailer(){
 		System.out.println("Will unregister:" + name);
 		if(warehouse.unregisterRegailer(name)){
@@ -129,17 +131,25 @@ public class WarehouseClient {
 			System.out.println("Failed to do registration.");
 		}
 	}
-	
+
 	private void testShippingGoods(){
-		System.out.println("Will unregister:" + name);
-		if(warehouse.unregisterRegailer(name)){
-			System.out.println("Registering is done Successfully.");
-		}else{
-			System.out.println("Failed to do registration.");
+		Item []itemArray = warehouse.getProductsByID(-1);
+
+
+		ItemImpl[] itemImplArray = 
+				(ItemImpl[])warehouse.shippingGoods(itemArray);
+
+		System.out.println("warehouse.shippingGoods return:");
+		for(ItemImpl itemImpl: itemImplArray){
+			System.out.println(itemImpl.toString());
 		}
 	}
-	
-	
+
+	private void testShuttingDownWarehouse(){
+		warehouse.shutdown();
+		System.out.println("warehouse is shutdown propperly.");
+	}
+
 	public static void main(String[] args) {
 		WarehouseClient warehouseClient = new WarehouseClient();
 		if(!warehouseClient.initializeOrbEnvirement(args)){
@@ -148,7 +158,7 @@ public class WarehouseClient {
 		if(!warehouseClient.connectWarehouse()){
 			return;
 		}
-		
+
 		String cmd = new String(); 
 		while(true){
 			System.out.println("Please select the option:");
@@ -159,9 +169,10 @@ public class WarehouseClient {
 			System.out.println("\t5 for registering retailer.");
 			System.out.println("\t6 for unregistering retailer.");
 			System.out.println("\t7 for shipping goods.");
-			
+			System.out.println("\t8 for shutting down warehouse.");
+
 			System.out.println("\tq for QUIT.");
-			
+
 			cmd = warehouseClient.in.next();
 			if(cmd.equals("1")){
 				warehouseClient.testGetProductsById();
@@ -177,6 +188,9 @@ public class WarehouseClient {
 				warehouseClient.testUnregisteringRetailer();
 			}else if(cmd.equals("7")){
 				warehouseClient.testShippingGoods();
+			}else if(cmd.equals("8")){
+				warehouseClient.testShuttingDownWarehouse();
+				break;
 			}else if(cmd.equals("q")){
 				break;
 			}else{

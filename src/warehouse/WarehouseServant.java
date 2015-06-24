@@ -196,7 +196,7 @@ public class WarehouseServant extends WarehousePOA {
 		// TODO Auto-generated method stub
 
 		Item[] returnitem=null;
-		if((productID!=0)){
+		if((productID != -1)){
 
 			Item inventoryItem = inventoryManager.inventoryItemMap.get(productID);
 			if(inventoryItem != null){
@@ -265,7 +265,7 @@ public class WarehouseServant extends WarehousePOA {
 	public Item[] getProductsByID(int productID) {
 		// TODO Auto-generated method stub
 		Item[] returnitem=null;
-		if((productID)!=0){
+		if((productID) != -1){
 
 			Item inventoryItem = inventoryManager.inventoryItemMap.get(productID);
 			if(inventoryItem != null){
