@@ -3,7 +3,7 @@ package tools;
 import org.dom4j.Element;
 import org.dom4j.tree.DefaultElement;
 
-public class ItemImpl extends ProductImpl {
+public class ItemImpl extends Item {
 	
 	protected static final long serialVersionUID = -1927708729616470764L;
 	public int quantity;
@@ -61,7 +61,7 @@ public class ItemImpl extends ProductImpl {
 	 * @return the clone product from the current item 
 	 */
 	public Product cloneProduct(){
-		return super.clone();
+		return new ProductImpl(productID, manufacturerName,productType, unitPrice);
 	}
 	
 	/**
