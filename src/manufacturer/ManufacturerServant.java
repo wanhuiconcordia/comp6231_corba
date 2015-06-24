@@ -3,6 +3,7 @@ package manufacturer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.dom4j.Element;
 import org.omg.CORBA.ORB;
@@ -25,6 +26,7 @@ public class ManufacturerServant extends ManufacturerPOA{
 	private PurchaseOrderManager purchaseOrderManager;
 	private ORB Orb;
 	private ItemImpl impl;
+	Random random ; 
 	
 	
 	public ManufacturerServant(ORB orb, String name,LoggerClient loggerClient) {
@@ -34,7 +36,8 @@ public class ManufacturerServant extends ManufacturerPOA{
 		purchaseOrderMap = new HashMap<String, ItemImpl>();
 		orderNum = 1000;
 		purchaseOrderManager = new PurchaseOrderManager(name);
-		setProduct();
+		random = new Random();
+		setProduct(random);
 		System.out.println("ManufacturerImplementation constructed:" + name);
 	}
 
@@ -146,22 +149,21 @@ public class ManufacturerServant extends ManufacturerPOA{
 	
 	/**
 	 * Read product information from configure(xml) file and put them into a items map 
+	 * @param randm 
 	 */
-	private void setProduct(){
+	private void setProduct(Random randm){
 		XmlFileController xmlfile = new XmlFileController("settings/product_info.xml");
 		Element root = xmlfile.Read();
 		if(root != null){
 			List<Element> nodes = root.elements("product");
 			boolean newProductAdded = false;
 			for(Element subElem: nodes){
-				String manufacturerName = subElem.element("manufacturerName").getText();
-				if(manufacturerName.equals(name)){
+				String manufacturerName = name;
 					String productType = subElem.element("productType").getText();
-					float unitPrice = Float.parseFloat(subElem.element("unitPrice").getText());
+					float unitPrice = randm.nextInt(300 - 200 + 1) + 200;
 					if(purchaseOrderManager.itemsMap.get(productType) == null){
-						purchaseOrderManager.itemsMap.put(productType, new ItemImpl(manufacturerName, productType, unitPrice, 0));
+						purchaseOrderManager.itemsMap.put(productType, new ItemImpl(manufacturerName, productType, unitPrice, randm.nextInt(150 - 10 + 1) + 10));
 						newProductAdded = true;
-					}
 				}
 			}
 			if(newProductAdded){

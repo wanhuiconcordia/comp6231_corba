@@ -52,24 +52,29 @@ class RetailerServant extends RetailerPOA {
 				if(warehouseName.equals("q")){
 					break;
 				}else{
+					try{
 						warehouse = WarehouseHelper.narrow(namingContextRef.resolve_str(warehouseName));
 						System.out.println("Obtained a handle on server object: " + warehouseName);
 						warehouseList.add(warehouse);
+					}catch (NotFound e) {
+						System.out.println(warehouseName + " cannot be found!");
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+					} catch (CannotProceed e) {
+						System.out.println(warehouseName + " cannot be resolved!");
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+					} catch (org.omg.CosNaming.NamingContextPackage.InvalidName e) {
+						System.out.println(warehouseName + " cannot be resolved!");
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+					}
 				}
 			}
 
 		} catch (InvalidName e1) {
 			e1.printStackTrace();
-		} catch (NotFound e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CannotProceed e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (org.omg.CosNaming.NamingContextPackage.InvalidName e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 	}
 	
 	@Override
