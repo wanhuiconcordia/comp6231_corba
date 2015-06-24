@@ -1,6 +1,6 @@
 package warehouse;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NameComponent;
@@ -10,25 +10,35 @@ import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
 
 import manufacturer.*;
-import retailer.*;
 
 public class WarehouseServer {
 	String name;
-	private HashMap<String,Manufacturer> maufactures;
+	private HashMap<String,Manufacturer> manufactures;
 	InventoryManager inventorymanager;
 	public WarehouseServer(){
 		
 	}
 	
 	public void main(String []args){
-		
+		int length=args.length;
+		name=args[length-1];
+		Scanner in=new Scanner(System.in);
+		System.out.println("Enter number of Manufacturers to register");
+		int count=in.nextInt();
+		for(int i=1;i<=count;i++){
+			
+			System.out.println("Enter name of Manufacturer"+i);
+			String manufacturename=in.next();
+			Manufacturer manufact = null;
+			manufactures.put(manufacturename,manufact);
+		}
 		
 		try{
 			
 			ORB orb=ORB.init(args,null);
 			POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
 			rootpoa.the_POAManager().activate();
-			WarehouseServant warehouseimpl=new WarehouseServant(orb, name, maufactures);
+			WarehouseServant warehouseimpl=new WarehouseServant(orb, name, manufactures);
 			org.omg.CORBA.Object ref = rootpoa.servant_to_reference(warehouseimpl);
 			Warehouse wref=WarehouseHelper.narrow(ref);
 			org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");

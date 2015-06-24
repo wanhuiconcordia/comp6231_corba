@@ -39,6 +39,10 @@ public class ItemImpl extends Item {
 		this.quantity = item.quantity;
 	}
 	
+	public Product cloneProduct(){
+		return new ProductImpl(productID, manufacturerName, productType, unitPrice);
+	}
+	
 	public String toString(){
 		return productID
 				+ ", " + manufacturerName
