@@ -25,6 +25,7 @@ public class WarehouseServer {
 	try{
 			
 			ORB orb=ORB.init(args,null);
+			
 			POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
 			rootpoa.the_POAManager().activate();
 			WarehouseServant warehouseimpl=new WarehouseServant(orb, name);
@@ -55,6 +56,7 @@ public class WarehouseServer {
 		
 		
 		WarehouseServer warehouse=new  WarehouseServer();
+		
 		warehouse.bind(args);
 	
 		System.out.println("warehouse server exiting....");
