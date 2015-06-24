@@ -19,7 +19,7 @@ import tools.LoggerClient;
 import tools.Product;
 
 public class WarehouseServant extends WarehousePOA {
-	
+
 	private ORB orb;
 	private InventoryManager inventoryManager;
 	private String name;
@@ -32,33 +32,33 @@ public class WarehouseServant extends WarehousePOA {
 		this.orb=orb2;
 		this.name=name;
 		if(connect(name)){
-		inventoryManager=new InventoryManager(name);
-		for(Manufacturer manufact: manufactures.values()){
-			Product[] productList = manufact.getProductList();
-			if(productList != null){
-				for(Product product: productList){
-					String key = product.manufacturerName + product.productType;
-					Item inventoryItem = inventoryManager.inventoryItemMap.get(key);
-					if(inventoryItem == null){
-						inventoryManager.inventoryItemMap.put(key, new ItemImpl(product.manufacturerName,product.productType,product.unitPrice, 0));
+			inventoryManager=new InventoryManager(name);
+			for(Manufacturer manufact: manufactures.values()){
+				Product[] productList = manufact.getProductList();
+				if(productList != null){
+					for(Product product: productList){
+						String key = product.manufacturerName + product.productType;
+						Item inventoryItem = inventoryManager.inventoryItemMap.get(key);
+						if(inventoryItem == null){
+							inventoryManager.inventoryItemMap.put(key, new ItemImpl(product.manufacturerName,product.productType,product.unitPrice, 0));
+						}
 					}
 				}
 			}
+			replenish();
 		}
-		replenish();
-		}
-		
+
 	}
 	public void replenish(){
 		for(Item item: inventoryManager.inventoryItemMap.values()){
 			if(item.quantity < minimumquantity){
 				Manufacturer manufacturer = manufactures.get(item.manufacturerName);
-				
+
 				if(manufacturer == null){
 					loggerClient.write(name + ": Failed to get manufactorer from manufactures!");
 				}else{
-					Item orderItem = new ItemImpl(item);
-					
+					Item orderItem = new ItemImpl(item.manufacturerName,item.productType,item.unitPrice,item.quantity);
+
 					int oneTimeOrderCount = 40;
 					orderItem.quantity=oneTimeOrderCount;
 					String orderNum = manufacturer.processPurchaseOrder(orderItem);
@@ -85,42 +85,40 @@ public class WarehouseServant extends WarehousePOA {
 		org.omg.CORBA.Object objRef;
 		in= new Scanner(System.in);
 		try{
-		objRef =  orb.resolve_initial_references("NameService");
-		NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
-		while(true){			
-			System.out.println("enter the name of the manufacturer to connect else enter exit");
-			
-			manufacturename=in.next();
-			if(manufacturename.equals("exit"))
-			{
-				break;
+			objRef =  orb.resolve_initial_references("NameService");
+			NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
+			while(true){			
+				System.out.println("enter the name of the manufacturer to connect else enter exit");
+
+				manufacturename=in.next();
+				if(manufacturename.equals("exit"))
+				{
+					break;
+				}
+				else{
+					try{
+						manufacturerinterf	= ManufacturerHelper.narrow(ncRef.resolve_str(name));
+						manufactures.put(manufacturename,manufacturerinterf);
+						connected=true;
+
+					}catch (Exception e){
+
+						System.out.println("cannot connect to the manufacture try again");
+						// e.printStackTrace(System.out);
+
+					}
+				}
 			}
-			else{
-				
-			
-		try{
-			manufacturerinterf	= ManufacturerHelper.narrow(ncRef.resolve_str(name));
-			manufactures.put(manufacturename,manufacturerinterf);
-			connected=true;
-			
-		}catch (Exception e){
-			
-			System.out.println("cannot connect to the manufacture try again");
-			// e.printStackTrace(System.out);
-			
-		}
-		}
-		}
 		}catch(Exception e){
-			
+
 			System.out.println("connot connect to the server");
-			
+
 		}
 		return connected;
-}
+	}
 
 	//@Override
-	
+
 	private static  Item[] add(Item[] returnitem, Item inventoryItem) {
 		// TODO Auto-generated method stub
 		returnitem=Arrays.copyOf(returnitem,returnitem.length+1);
@@ -130,10 +128,10 @@ public class WarehouseServant extends WarehousePOA {
 	//@Override
 	public Item[] getProductsByType(String productType) {
 		// TODO Auto-generated method stub
-		
+
 		Item[] returnitem=null;
 		for(Item inventoryitems:inventoryManager.inventoryItemMap.values()){
-			
+
 			if(inventoryitems.productType.equals(productType)){
 				returnitem=add(returnitem,inventoryitems);
 			}
@@ -145,39 +143,39 @@ public class WarehouseServant extends WarehousePOA {
 	public Item[] getProductsByRegisteredManufacturers(String manufacturerName) {
 		// TODO Auto-generated method stub
 		Item[] returnitem=null;
-		
-			if(manufactures.containsKey(manufacturerName)){
-			
-				for(Item inventoryitems:inventoryManager.inventoryItemMap.values()){
-			
-					if(inventoryitems.manufacturerName.equals(manufacturerName)){
-						returnitem=add(returnitem,inventoryitems);
-					}
+
+		if(manufactures.containsKey(manufacturerName)){
+
+			for(Item inventoryitems:inventoryManager.inventoryItemMap.values()){
+
+				if(inventoryitems.manufacturerName.equals(manufacturerName)){
+					returnitem=add(returnitem,inventoryitems);
 				}
-			
+			}
+
 		}
 		return returnitem;
 	}
 
 	public synchronized Item[] shippingGoods(Item[] itemlist) {
-		
+
 		Item availableItems[]=null;
 		for(Item item: itemlist){
 			String key = item.manufacturerName+ item.productType;
 			Item inventoryItem = inventoryManager.inventoryItemMap.get(key);
 			if(inventoryItem != null){
 				if(inventoryItem.quantity < item.quantity){
-					availableItems=add(availableItems,new ItemImpl(inventoryItem));
+					availableItems=add(availableItems,new ItemImpl(inventoryItem.manufacturerName,inventoryItem.productType,inventoryItem.unitPrice,inventoryItem.quantity));
 					inventoryItem.quantity=0;
 				}else{
-					availableItems=add(availableItems,new ItemImpl(item));
+					availableItems=add(availableItems,new ItemImpl(item.manufacturerName,item.productType,item.unitPrice,item.quantity));
 					inventoryItem.quantity=(inventoryItem.quantity - item.quantity);
 				}
 				inventoryManager.saveItems();
 			}
 		}
 		replenish();
-		
+
 		String log = new String();
 		for(Item item: availableItems){
 			log = log + "Manufacturer name:" + item.manufacturerName
@@ -188,32 +186,32 @@ public class WarehouseServant extends WarehousePOA {
 			loggerClient.write(name + ": available items:");
 			loggerClient.write(log);
 		}
-	
+
 		return availableItems;
-			
+
 	}
 	//@Override
 	public Item[] getProducts(int productID, String manufacturerName) {
 		// TODO Auto-generated method stub
-		
+
 		Item[] returnitem=null;
 		if((productID!=0)){
-			
+
 			Item inventoryItem = inventoryManager.inventoryItemMap.get(productID);
 			if(inventoryItem != null){
-				
+
 				returnitem=add(returnitem,inventoryItem);
-				
+
 			}
-			
+
 		}
 		else{
-			
+
 			for(Item i:inventoryManager.inventoryItemMap.values()){
-				
+
 				returnitem=add(returnitem,i);
 			}
-			
+
 		}
 		return returnitem;
 	}
@@ -222,43 +220,43 @@ public class WarehouseServant extends WarehousePOA {
 	public boolean registerRetailer(String retailerName) {
 		// TODO Auto-generated method stub
 		if(retailerName.isEmpty()){
-			
+
 			return false;
-			
+
 		}
 		else{
-			
+
 			retailers.add(retailerName);
 			return true;
-		
+
 		}
 	}
-	
+
 
 	//@Override
 	public boolean unregisterRegailer(String regailerName) {
 		// TODO Auto-generated method stub
 		if(regailerName.isEmpty()){
-			
+
 			return false;
-		
+
 		}else{
 			if(retailers.contains(regailerName)){
 
 				retailers.remove(regailerName);
 				return true;
-				
+
 			}else{
-				
+
 				return false;
 			}
 
-			
+
 		}
-	
+
 	}
-	
-	
+
+
 	public String getName() {
 		// TODO Auto-generated method stub
 		return name;
@@ -269,30 +267,30 @@ public class WarehouseServant extends WarehousePOA {
 		orb.shutdown(false);
 	}
 	@Override
-	
+
 	public Item[] getProductsByID(int productID) {
 		// TODO Auto-generated method stub
 		Item[] returnitem=null;
 		if((productID)!=0){
-			
+
 			Item inventoryItem = inventoryManager.inventoryItemMap.get(productID);
 			if(inventoryItem != null){
-				
+
 				returnitem=add(returnitem,inventoryItem);
-				
+
 			}
-			
+
 		}
 		else{
-			
+
 			for(Item i:inventoryManager.inventoryItemMap.values()){
-				
+
 				returnitem=add(returnitem,i);
 			}
-			
+
 		}
 		return returnitem;
 	}
 
-	
+
 }

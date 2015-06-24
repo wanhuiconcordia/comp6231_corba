@@ -13,19 +13,19 @@ import manufacturer.*;
 
 public class WarehouseServer {
 	static String name;
-	
+
 	InventoryManager inventorymanager;
 	public WarehouseServer(){
 		Scanner in=new Scanner(System.in);
 		System.out.println("Enter name of the warehouse");
 		name=in.next();
-		
+
 	}
 	public void bind(String [] args){
-	try{
-			
+		try{
+
 			ORB orb=ORB.init(args,null);
-			
+
 			POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
 			rootpoa.the_POAManager().activate();
 			WarehouseServant warehouseimpl=new WarehouseServant(orb, name);
@@ -34,31 +34,31 @@ public class WarehouseServer {
 			org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
 			NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
 			String wname = name;
-		    NameComponent path[] = ncRef.to_name( wname );
-		    ncRef.rebind(path, wref);
+			NameComponent path[] = ncRef.to_name( wname );
+			ncRef.rebind(path, wref);
 			System.out.println("warehouse server started and waiting....");
 			orb.run();
-	     
+
 		}catch(Exception e){
-			
+
 			System.out.println("connot bond warehouseservent to warehouseserver");
 			exit(1);
 			// e.printStackTrace(System.out);
-			
+
 		}
 	}
-	
+
 	private void exit(int i) {
 		// TODO Auto-generated method stub
-		
+
 	}
 	public static void main(String []args){
-		
-		
+
+
 		WarehouseServer warehouse=new  WarehouseServer();
-		
+
 		warehouse.bind(args);
-	
+
 		System.out.println("warehouse server exiting....");
 	}
 
