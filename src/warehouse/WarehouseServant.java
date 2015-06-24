@@ -4,6 +4,7 @@ package warehouse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import manufacturer.Manufacturer;
 import manufacturer.ManufacturerHelper;
@@ -26,12 +27,11 @@ public class WarehouseServant extends WarehousePOA {
 	private HashMap<String,Manufacturer> manufactures;
 	private ArrayList<String> retailers;
 	private LoggerClient loggerClient;
-	
-	public WarehouseServant(ORB orb2,String name,  HashMap<String,Manufacturer> manufacturerlist){
-	
+	Scanner in ;
+	public WarehouseServant(ORB orb2,String name){
 		this.orb=orb2;
 		this.name=name;
-		this.manufactures=new   HashMap<String,Manufacturer>(manufacturerlist);
+		if(connect(name)){
 		inventoryManager=new InventoryManager(name);
 		for(Manufacturer manufact: manufactures.values()){
 			Product[] productList = manufact.getProductList();
@@ -46,6 +46,7 @@ public class WarehouseServant extends WarehousePOA {
 			}
 		}
 		replenish();
+		}
 		
 	}
 	public void replenish(){
@@ -77,21 +78,47 @@ public class WarehouseServant extends WarehousePOA {
 
 		}
 	}
-	public void connect(Manufacturer manufactureimpl,String name){
+	public boolean connect(String name){
+		String manufacturename;
+		boolean connected=false;
+		Manufacturer manufacturerinterf;
+		org.omg.CORBA.Object objRef;
+		in= new Scanner(System.in);
 		try{
+		objRef =  orb.resolve_initial_references("NameService");
+		NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
+		while(true){			
+			System.out.println("enter the name of the manufacturer to connect else enter exit");
 			
-			org.omg.CORBA.Object objRef =  orb.resolve_initial_references("NameService");
-			NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
-			manufactureimpl	= ManufacturerHelper.narrow(ncRef.resolve_str(name));
+			manufacturename=in.next();
+			if(manufacturename.equals("exit"))
+			{
+				break;
+			}
+			else{
+				
+			
+		try{
+			manufacturerinterf	= ManufacturerHelper.narrow(ncRef.resolve_str(name));
+			manufactures.put(manufacturename,manufacturerinterf);
+			connected=true;
 			
 		}catch (Exception e){
 			
-			System.out.println("Error:"+ e);
-			 e.printStackTrace(System.out);
+			System.out.println("cannot connect to the manufacture try again");
+			// e.printStackTrace(System.out);
 			
 		}
-		
-	}
+		}
+		}
+		}catch(Exception e){
+			
+			System.out.println("connot connect to the server");
+			
+		}
+		return connected;
+}
+
 	//@Override
 	
 	private static  Item[] add(Item[] returnitem, Item inventoryItem) {
