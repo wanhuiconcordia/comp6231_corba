@@ -16,12 +16,12 @@ import tools.XmlFileController;
 
 public class CustomerManager {
 
-	private ArrayList<Customer> customers;
+	private ArrayList<CustomerImpl> customers;
 
 	private String fileName;
 
 	public CustomerManager(String fileName){
-		customers = new ArrayList<Customer>();
+		customers = new ArrayList<CustomerImpl>();
 		this.fileName = fileName;
 		loadCustomers();
 	}
@@ -33,8 +33,8 @@ public class CustomerManager {
 		format.setEncoding("UTF-8");
 		Document document = DocumentHelper.createDocument();
 		Element root = document.addElement("customers");
-		for(Customer customer: customers){
-			Element ml = customer.toXmlElement();
+		for(CustomerImpl customerImpl: customers){
+			Element ml = customerImpl.toXmlElement();
 			root.add(ml);
 		}
 		try {
@@ -66,8 +66,8 @@ public class CustomerManager {
 	}
 
 	public synchronized SignUpResult register(String name, String password, String street1, String street2, String city, String state, String zip, String country){
-		for(Customer customer: customers){
-			if(customer.name.equals(name) && customer.password.equals(password)){
+		for(CustomerImpl customerImpl: customers){
+			if(customerImpl.name.equals(name) && customerImpl.password.equals(password)){
 				return new SignUpResultImpl(false, -1, "Failed to sign up! (User name exists, try another name)");
 			}
 		}
@@ -78,18 +78,18 @@ public class CustomerManager {
 	}
 
 	public synchronized Customer find(int customerReferenceNumber, String password){
-		for(Customer customer: customers){
-			if(customer.customerReferenceNumber == customerReferenceNumber
-					&& customer.password.equals(password)){
-				return customer;
+		for(CustomerImpl customerImpl: customers){
+			if(customerImpl.customerReferenceNumber == customerReferenceNumber
+					&& customerImpl.password.equals(password)){
+				return customerImpl;
 			}
 		}
 		return null;
 	}
 
 	public synchronized boolean find(int customerReferenceNumber){
-		for(Customer customer: customers){
-			if(customer.customerReferenceNumber == customerReferenceNumber){
+		for(CustomerImpl customerImpl: customers){
+			if(customerImpl.customerReferenceNumber == customerReferenceNumber){
 				return true;
 			}
 		}
@@ -97,9 +97,9 @@ public class CustomerManager {
 	}
 
 	public synchronized Customer getCustomerByReferenceNumber(int customerReferenceNumber){
-		for(Customer customer: customers){
-			if(customer.customerReferenceNumber == customerReferenceNumber){
-				return customer;
+		for(CustomerImpl customerImpl: customers){
+			if(customerImpl.customerReferenceNumber == customerReferenceNumber){
+				return customerImpl;
 			}
 		}
 		return null;

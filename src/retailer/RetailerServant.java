@@ -52,20 +52,23 @@ class RetailerServant extends RetailerPOA {
 				if(warehouseName.equals("q")){
 					break;
 				}else{
-					try {
 						warehouse = WarehouseHelper.narrow(namingContextRef.resolve_str(warehouseName));
 						System.out.println("Obtained a handle on server object: " + warehouseName);
 						warehouseList.add(warehouse);
-					} catch (NotFound | CannotProceed
-							| org.omg.CosNaming.NamingContextPackage.InvalidName e) {
-						System.out.println("Failed to resolve warehouse:" + warehouseName);
-						//e.printStackTrace();
-					}
 				}
 			}
 
 		} catch (InvalidName e1) {
 			e1.printStackTrace();
+		} catch (NotFound e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CannotProceed e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (org.omg.CosNaming.NamingContextPackage.InvalidName e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -106,8 +109,7 @@ class RetailerServant extends RetailerPOA {
 		
 
 	@Override
-	public ItemShippingStatus[] submitOrder(int customerReferenceNumber,
-			Item[] itemList) {
+	public ItemShippingStatus[] submitOrder(int customerReferenceNumber, Item[] itemList) {
 		List<Item> orderItemList = Arrays.asList(itemList);
 		Customer currentCustomer = customerManager.getCustomerByReferenceNumber(customerReferenceNumber);
 		if(currentCustomer == null){

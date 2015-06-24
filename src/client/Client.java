@@ -49,16 +49,26 @@ public class Client
 
 		System.out.print("Please input retailer name to establish connection:");
 		String retailerName = in.next();
-		try {
-			retailer = RetailerHelper.narrow(namingContextRef.resolve_str(retailerName));
-			System.out.println("Obtained a handle on server object: " + retailerName);
-			return true;
-		} catch (NotFound | CannotProceed
-				| org.omg.CosNaming.NamingContextPackage.InvalidName e) {
+		
+			try {
+				retailer = RetailerHelper.narrow(namingContextRef.resolve_str(retailerName));
+				System.out.println("Obtained a handle on server object: " + retailerName);
+				return true;
+			} catch (NotFound e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CannotProceed e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (org.omg.CosNaming.NamingContextPackage.InvalidName e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+		
 			System.out.println("Failed to resolve retailer:" + retailerName);
 			return false;
-			//e.printStackTrace();
-		}
 	}
 
 	/**

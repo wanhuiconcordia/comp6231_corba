@@ -1,10 +1,7 @@
 package retailer;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 import tools.*;
-import warehouse.Warehouse;
-import warehouse.WarehouseHelper;
 
 import org.omg.CosNaming.*;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
