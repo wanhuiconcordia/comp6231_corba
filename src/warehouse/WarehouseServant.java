@@ -24,7 +24,7 @@ public class WarehouseServant extends WarehousePOA {
 	private String name;
 	int minimumquantity=100;
 	private HashMap<String,Manufacturer> manufactures;
-	private ArrayList<String> retailers;
+	private ArrayList<String> retailerNameList;
 	private LoggerClient loggerClient;
 	
 	public WarehouseServant(ORB orb2,String name,  HashMap<String,Manufacturer> manufacturerlist){
@@ -133,7 +133,6 @@ public class WarehouseServant extends WarehousePOA {
 	}
 
 	public synchronized Item[] shippingGoods(Item[] itemlist) {
-		
 		Item availableItems[]=null;
 		for(Item item: itemlist){
 			String key = item.manufacturerName+ item.productType;
@@ -200,10 +199,10 @@ public class WarehouseServant extends WarehousePOA {
 			
 		}
 		else{
-			
-			retailers.add(retailerName);
+			if(!retailerNameList.contains(retailerName)){
+				retailerNameList.add(retailerName);
+			}
 			return true;
-		
 		}
 	}
 	
@@ -212,23 +211,15 @@ public class WarehouseServant extends WarehousePOA {
 	public boolean unregisterRegailer(String regailerName) {
 		// TODO Auto-generated method stub
 		if(regailerName.isEmpty()){
-			
 			return false;
-		
 		}else{
-			if(retailers.contains(regailerName)){
-
-				retailers.remove(regailerName);
+			if(retailerNameList.contains(regailerName)){
+				retailerNameList.remove(regailerName);
 				return true;
-				
 			}else{
-				
 				return false;
 			}
-
-			
 		}
-	
 	}
 	
 	
