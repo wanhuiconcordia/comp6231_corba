@@ -96,7 +96,10 @@ public class ItemImpl extends Item {
 	public Element toXmlElement() {
 		DefaultElement customerElem = new DefaultElement("item");
 		
-		Element subElem = customerElem.addElement("manufacturerName");
+		Element subElem = customerElem.addElement("productID");
+		subElem.setText(String.valueOf(productID));
+		
+		subElem = customerElem.addElement("manufacturerName");
 		subElem.setText(manufacturerName);
 		
 		subElem = customerElem.addElement("productType");

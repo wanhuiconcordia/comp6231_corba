@@ -32,20 +32,31 @@ public class WarehouseServant extends WarehousePOA {
 		this.orb=orb2;
 		this.name=name;
 		manufactures = new HashMap<String, Manufacturer>();
+		retailerNameList=new ArrayList<String>();
 		if(connect(name)){
 			
 			inventoryManager=new InventoryManager(name);
 			for(Manufacturer manufact: manufactures.values()){
+				
 				Product[] productList = manufact.getProductList();
-				if(productList != null){
+				
+				if(productList == null){
+					System.out.println("manufacturer return null");
+				}else{
 					for(Product product: productList){
+						//System.out.println(" items "+product.manufacturerName);
 						String key = product.manufacturerName + product.productType;
 						Item inventoryItem = inventoryManager.inventoryItemMap.get(key);
+						//ItemImpl itemnew=(ItemImpl) inventoryItem;
+						//System.out.println(itemnew.toString());
 						if(inventoryItem == null){
+							System.out.println("added item");
 							inventoryManager.inventoryItemMap.put(key, new ItemImpl(product.manufacturerName,product.productType,product.unitPrice, 0));
 						}
 					}
 				}
+				
+				System.out.println("productList length:" + productList.length);
 			}
 			
 			
@@ -58,7 +69,7 @@ public class WarehouseServant extends WarehousePOA {
 	public void replenish(){
 		
 		for(Item item: inventoryManager.inventoryItemMap.values()){
-//			System.out.println(
+		System.out.println("entere replenish");
 			if(item.quantity < minimumquantity){
 				System.out.println("products of :"+item.manufacturerName);
 				Manufacturer manufacturer = manufactures.get(item.manufacturerName);
@@ -144,20 +155,21 @@ public class WarehouseServant extends WarehousePOA {
 	public Item[] getProductsByType(String productType) {
 		// TODO Auto-generated method stub
 
-		Item[] returnitem=null;
+		Item[] returnitem=new Item[0];
 		for(Item inventoryitems:inventoryManager.inventoryItemMap.values()){
 
 			if(inventoryitems.productType.equals(productType)){
 				returnitem=add(returnitem,inventoryitems);
 			}
 		}
+		System.out.println("return itemlist size"+returnitem.length);
 		return returnitem;
 	}
 
 	//@Override
 	public Item[] getProductsByRegisteredManufacturers(String manufacturerName) {
 		// TODO Auto-generated method stub
-		Item[] returnitem=null;
+		Item[] returnitem=new Item[0];
 
 		if(manufactures.containsKey(manufacturerName)){
 
@@ -169,11 +181,12 @@ public class WarehouseServant extends WarehousePOA {
 			}
 
 		}
+		System.out.println("return itemlist size"+returnitem.length);
 		return returnitem;
 	}
 
 	public synchronized Item[] shippingGoods(Item[] itemlist) {
-		Item availableItems[]=null;
+		Item availableItems[]=new Item[0];
 		for(Item item: itemlist){
 			String key = item.manufacturerName+ item.productType;
 			Item inventoryItem = inventoryManager.inventoryItemMap.get(key);
@@ -208,7 +221,7 @@ public class WarehouseServant extends WarehousePOA {
 	public Item[] getProducts(int productID, String manufacturerName) {
 		// TODO Auto-generated method stub
 
-		Item[] returnitem=null;
+		Item[] returnitem=new Item[0];
 		if((productID != -1)){
 
 			Item inventoryItem = inventoryManager.inventoryItemMap.get(productID);
@@ -227,11 +240,13 @@ public class WarehouseServant extends WarehousePOA {
 			}
 
 		}
+		System.out.println("return itemlist size"+returnitem.length);
 		return returnitem;
 	}
 
 	//@Override
 	public boolean registerRetailer(String retailerName) {
+		//System.out.println("enter to register the clinet");
 		// TODO Auto-generated method stub
 		if(retailerName.isEmpty()){
 
@@ -277,10 +292,12 @@ public class WarehouseServant extends WarehousePOA {
 
 	public Item[] getProductsByID(int productID) {
 		// TODO Auto-generated method stub
-		Item[] returnitem=null;
+		System.out.println("getProductsByID is called:" + productID);
+		Item[] returnitem=new Item[0];
 		if((productID) != -1){
 
 			Item inventoryItem = inventoryManager.inventoryItemMap.get(productID);
+			
 			if(inventoryItem != null){
 
 				returnitem=add(returnitem,inventoryItem);
@@ -296,6 +313,7 @@ public class WarehouseServant extends WarehousePOA {
 			}
 
 		}
+		System.out.println("return itemlist size"+returnitem.length);
 		return returnitem;
 	}
 

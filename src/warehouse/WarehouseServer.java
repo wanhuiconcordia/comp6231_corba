@@ -26,6 +26,7 @@ public class WarehouseServer {
 			POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
 			rootpoa.the_POAManager().activate();
 			warehouseServant=new WarehouseServant(orb, name);
+			System.out.println("after create warehouse");
 			org.omg.CORBA.Object ref = rootpoa.servant_to_reference(warehouseServant);
 			Warehouse wref=WarehouseHelper.narrow(ref);
 			org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");

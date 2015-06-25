@@ -7,8 +7,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.tree.DefaultElement;
-import tools.Item;
-import tools.XmlFileController;
+
 import tools.*;
 public class InventoryManager {
 	public HashMap<String, Item> inventoryItemMap;
@@ -37,8 +36,9 @@ public class InventoryManager {
 	}
 	public Element toXmlElement(Item i){
 		DefaultElement customerElem = new DefaultElement("item");
-		
-		Element subElem = customerElem.addElement("manufacturerName");
+		Element subElem = customerElem.addElement("productID");
+		subElem.setText(String.valueOf(i.productID));
+		subElem = customerElem.addElement("manufacturerName");
 		subElem.setText(i.manufacturerName);
 		
 		subElem = customerElem.addElement("productType");

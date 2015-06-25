@@ -27,8 +27,8 @@ public class ManufacturerServant extends ManufacturerPOA{
 	private ORB Orb;
 	private ItemImpl impl;
 	Random random ; 
-	
-	
+
+
 	public ManufacturerServant(ORB orb, String name,LoggerClient loggerClient) {
 		this.Orb = orb;
 		this.name = name;
@@ -42,7 +42,7 @@ public class ManufacturerServant extends ManufacturerPOA{
 	}
 
 	public String processPurchaseOrder(Item item) {
-		
+
 		impl = new ItemImpl(item);
 		if(!impl.manufacturerName.equals(name)){
 			System.out.println(name + ": Manufacturer name is not equal to current manufacturer name:" + impl.manufacturerName);
@@ -62,16 +62,16 @@ public class ManufacturerServant extends ManufacturerPOA{
 					int oneTimeQuantity = 100;
 					if(produce(impl.productType, oneTimeQuantity)){
 						availableItem.setQuantity(availableItem.getQuantity() + oneTimeQuantity);
-						
+
 						purchaseOrderManager.saveItems();
-						
+
 						loggerClient.write(name + ": Produced " + oneTimeQuantity + " " + impl.productType);
 					}else{
 						loggerClient.write(name + ": Failed to produce:" + oneTimeQuantity);
 						return null;
 					}
 				}
-				
+
 				if(impl.getQuantity() >= availableItem.getQuantity()){
 					return null;
 				}else{
@@ -83,7 +83,7 @@ public class ManufacturerServant extends ManufacturerPOA{
 			}
 		}
 	}
-	
+
 	/**
 	 * Simulate real produce.
 	 * @param productName
@@ -106,7 +106,7 @@ public class ManufacturerServant extends ManufacturerPOA{
 		}
 	}
 
-	
+
 	@Override
 	public boolean receivePayment(String orderNum, float totalPrice) {
 		ItemImpl waitingForPayItem = purchaseOrderMap.get(orderNum);
@@ -127,7 +127,7 @@ public class ManufacturerServant extends ManufacturerPOA{
 			}
 		}
 	}
-	
+
 	/**
 	 * @return current manufacturer's name
 	 */
@@ -142,41 +142,62 @@ public class ManufacturerServant extends ManufacturerPOA{
 		for(ItemImpl item: purchaseOrderManager.itemsMap.values()){
 			productList.add(item.cloneProduct());
 		}
-		
+
 		Product[] proArr = productList.toArray(new Product[productList.size()]);
 		return proArr;
 	}
-	
+
 	/**
 	 * Read product information from configure(xml) file and put them into a items map 
 	 * @param randm 
 	 */
 	private void setProduct(Random randm){
-		XmlFileController xmlfile = new XmlFileController("settings/product_info.xml");
-		Element root = xmlfile.Read();
-		if(root != null){
+		XmlFileController productInfofile = new XmlFileController(name + ".xml");
+		Element root = productInfofile.Read();
+		if(root == null){
+			XmlFileController xmlfile = new XmlFileController("settings/product_info.xml");
+			Element root2 = xmlfile.Read();
+			
+			if(root2 == null){
+				System.out.println("Failed to read settings/product_info.xml");
+			}else{
+				List<Element> nodes = root2.elements("product");
+				for(Element subElem: nodes){
+					String manufacturerName = name;
+					String productType = subElem.element("productType").getText();
+					float unitPrice = randm.nextInt(300 - 200 + 1) + 200;
+					int quantity = randm.nextInt(150 - 10 + 1) + 10;
+					ItemImpl itemImpl = new ItemImpl(manufacturerName, productType, unitPrice, quantity);
+					System.out.println(itemImpl.toString() + " is added from : product_info.xml");
+					if(purchaseOrderManager.itemsMap.get(productType) == null){
+						purchaseOrderManager.itemsMap.put(productType, itemImpl);
+					}
+				}
+				purchaseOrderManager.saveItems();
+			}
+		}else{
 			List<Element> nodes = root.elements("product");
 			boolean newProductAdded = false;
 			for(Element subElem: nodes){
 				String manufacturerName = name;
-					String productType = subElem.element("productType").getText();
-					float unitPrice = randm.nextInt(300 - 200 + 1) + 200;
-					if(purchaseOrderManager.itemsMap.get(productType) == null){
-						purchaseOrderManager.itemsMap.put(productType, new ItemImpl(manufacturerName, productType, unitPrice, randm.nextInt(150 - 10 + 1) + 10));
-						newProductAdded = true;
+				String productType = subElem.element("productType").getText();
+				float unitPrice = randm.nextInt(300 - 200 + 1) + 200;
+				if(purchaseOrderManager.itemsMap.get(productType) == null){
+					purchaseOrderManager.itemsMap.put(productType, new ItemImpl(manufacturerName, productType, unitPrice, randm.nextInt(150 - 10 + 1) + 10));
+					newProductAdded = true;
 				}
 			}
 			if(newProductAdded){
 				purchaseOrderManager.saveItems();
 			}
 		}
-		
+
 	}
 
 	@Override
 	public void shutdown() {
 		Orb.shutdown(false);
-		
+
 	}
 
 }

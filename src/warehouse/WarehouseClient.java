@@ -1,8 +1,6 @@
 package warehouse;
 
-import java.util.ArrayList;
 import java.util.Scanner;
-
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosNaming.NamingContextExt;
@@ -10,12 +8,8 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
-import retailer.Retailer;
-import retailer.RetailerHelper;
-import tools.CustomerImpl;
 import tools.Item;
 import tools.ItemImpl;
-import tools.ItemShippingStatusImpl;
 import tools.LoggerClient;
 
 public class WarehouseClient {
@@ -77,42 +71,57 @@ public class WarehouseClient {
 
 	private void testGetProductsById(){
 		System.out.println("Please input product ID:");
-		int productID = in.nextInt();
-		Item[] items = warehouse.getProductsByID(productID);
-		System.out.println("There are " + items.length + " items");
-//		ItemImpl[] itemImpls = (ItemImpl[])warehouse.getProductsByID(productID);
-//
-//		for(ItemImpl itemImpl: itemImpls){
-//			System.out.println(itemImpl.toString());
-//		}
-	}
+		try{
+			int productID = in.nextInt();
+			Item[] itemArray = warehouse.getProductsByID(productID);
+//			
+		//	System.out.println("There are " + itemArray.length + " items");
+			System.out.println("There are " + itemArray.length + " items");
+			for(Item item: itemArray){
+				ItemImpl tmpItemImpl = new ItemImpl(item);
+				System.out.println(tmpItemImpl.toString());
+			}
+		}catch(Exception e){
+			System.out.println("Input a integer for product id.");
+		}
+	}		
 
 	private void testGetProductsByType(){
 		System.out.println("Please input product type:");
 		String productType = in.next();
-		ItemImpl[] itemImpls = (ItemImpl[])warehouse.getProductsByType(productType);
-		for(ItemImpl itemImpl: itemImpls){
-			System.out.println(itemImpl.toString());
+		Item[] itemArray = warehouse.getProductsByType(productType);
+		System.out.println("There are " + itemArray.length + " items");
+		for(Item item: itemArray){
+			ItemImpl tmpItemImpl = new ItemImpl(item);
+			System.out.println(tmpItemImpl.toString());
 		}
 	}
 
 	private void testGetProductsByManufactureId(){
 		System.out.println("Please input manufacture ID:");
 		String manufactureID = in.next();
-		ItemImpl[] itemImpls = (ItemImpl[])warehouse.getProductsByRegisteredManufacturers(manufactureID);
-		for(ItemImpl itemImpl: itemImpls){
-			System.out.println(itemImpl.toString());
+		Item[] itemArray = warehouse.getProductsByRegisteredManufacturers(manufactureID);
+		System.out.println("There are " + itemArray.length + " items");
+		for(Item item: itemArray){
+			ItemImpl tmpItemImpl = new ItemImpl(item);
+			System.out.println(tmpItemImpl.toString());
 		}
 	}
 
 	private void testGetProductsPerManufacturer(){
-		System.out.println("Please input manufacturer ID:");
-		String manufacturerID = in.next();
-		System.out.println("Please input product ID:");
-		int productID = in.nextInt();
-		ItemImpl[] itemImpls = (ItemImpl[])warehouse.getProducts(productID, manufacturerID);
-		for(ItemImpl itemImpl: itemImpls){
-			System.out.println(itemImpl.toString());
+		try{
+			System.out.println("Please input manufacturer ID:");
+			String manufacturerID = in.next();
+			System.out.println("Please input product ID:");
+			int productID = in.nextInt();
+			Item[] itemArray = warehouse.getProducts(productID, manufacturerID);
+			System.out.println("There are " + itemArray.length + " items");
+			for(Item item: itemArray){
+				ItemImpl tmpItemImpl = new ItemImpl(item);
+				System.out.println(tmpItemImpl.toString());
+			}
+		}catch(Exception e){
+			System.out.println("Input a integer for product id.");
 		}
 	}
 
@@ -135,15 +144,14 @@ public class WarehouseClient {
 	}
 
 	private void testShippingGoods(){
-		Item []itemArray = warehouse.getProductsByID(-1);
+		Item []itemArray1 = warehouse.getProductsByID(-1);
 
 
-		ItemImpl[] itemImplArray = 
-				(ItemImpl[])warehouse.shippingGoods(itemArray);
-
-		System.out.println("warehouse.shippingGoods return:");
-		for(ItemImpl itemImpl: itemImplArray){
-			System.out.println(itemImpl.toString());
+		Item[] itemArray = warehouse.shippingGoods(itemArray1);
+		System.out.println("There are " + itemArray.length + " items");
+		for(Item item: itemArray){
+			ItemImpl tmpItemImpl = new ItemImpl(item);
+			System.out.println(tmpItemImpl.toString());
 		}
 	}
 
