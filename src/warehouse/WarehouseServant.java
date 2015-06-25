@@ -31,6 +31,7 @@ public class WarehouseServant extends WarehousePOA {
 	public WarehouseServant(ORB orb2,String name){
 		this.orb=orb2;
 		this.name=name;
+		loggerClient=new LoggerClient();
 		manufactures = new HashMap<String, Manufacturer>();
 		retailerNameList=new ArrayList<String>();
 		if(connect(name)){
@@ -188,8 +189,11 @@ public class WarehouseServant extends WarehousePOA {
 	public synchronized Item[] shippingGoods(Item[] itemlist) {
 		Item availableItems[]=new Item[0];
 		for(Item item: itemlist){
+			System.out.println("item sent is:"+item.productType +" with quantity :"+item.quantity);
 			String key = item.manufacturerName+ item.productType;
+			
 			Item inventoryItem = inventoryManager.inventoryItemMap.get(key);
+			System.out.println("item sent is:"+inventoryItem.productType +" with quantity :"+inventoryItem.quantity);
 			if(inventoryItem != null){
 				if(inventoryItem.quantity < item.quantity){
 					availableItems=add(availableItems,new ItemImpl(inventoryItem.manufacturerName,inventoryItem.productType,inventoryItem.unitPrice,inventoryItem.quantity));
@@ -223,12 +227,19 @@ public class WarehouseServant extends WarehousePOA {
 
 		Item[] returnitem=new Item[0];
 		if((productID != -1)){
-
-			Item inventoryItem = inventoryManager.inventoryItemMap.get(productID);
+			
+			for(String inventorykey:inventoryManager.inventoryItemMap.keySet()){
+				int hashofkey=inventorykey.hashCode();
+				System.out.println("hashcode"+hashofkey+"key"+ inventorykey);
+				if(productID==hashofkey){
+					Item inventoryItem = inventoryManager.inventoryItemMap.get(inventorykey);
+			
 			if(inventoryItem != null){
 
 				returnitem=add(returnitem,inventoryItem);
 
+			}
+				}
 			}
 
 		}
@@ -286,7 +297,11 @@ public class WarehouseServant extends WarehousePOA {
 	@Override
 	public void shutdown() {
 		// TODO Auto-generated method stub
-		orb.shutdown(false);
+		try{
+			orb.shutdown(false);
+		}catch(Exception e){
+			System.out.println(name + " is shut down propperly.");
+		}
 	}
 	@Override
 
@@ -295,14 +310,21 @@ public class WarehouseServant extends WarehousePOA {
 		System.out.println("getProductsByID is called:" + productID);
 		Item[] returnitem=new Item[0];
 		if((productID) != -1){
+			for(String inventorykey:inventoryManager.inventoryItemMap.keySet()){
+				int hashofkey=inventorykey.hashCode();
+				System.out.println("hashcode"+hashofkey+"key"+ inventorykey);
+				if(productID==hashofkey){
+					Item inventoryItem = inventoryManager.inventoryItemMap.get(inventorykey);
+					
+					if(inventoryItem != null){
 
-			Item inventoryItem = inventoryManager.inventoryItemMap.get(productID);
-			
-			if(inventoryItem != null){
+						returnitem=add(returnitem,inventoryItem);
 
-				returnitem=add(returnitem,inventoryItem);
-
+					}
+				}
 			}
+
+			
 
 		}
 		else{

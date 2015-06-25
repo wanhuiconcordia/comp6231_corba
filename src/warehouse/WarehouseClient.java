@@ -47,7 +47,7 @@ public class WarehouseClient {
 	public boolean connectWarehouse(){
 
 		System.out.print("Please input warehouse name to establish connection:");
-		String warehouseName = in.next();
+		String warehouseName = in.nextLine();
 
 		try {
 			warehouse = WarehouseHelper.narrow(namingContextRef.resolve_str(warehouseName));
@@ -73,6 +73,7 @@ public class WarehouseClient {
 		System.out.println("Please input product ID:");
 		try{
 			int productID = in.nextInt();
+			in.nextLine();
 			Item[] itemArray = warehouse.getProductsByID(productID);
 //			
 		//	System.out.println("There are " + itemArray.length + " items");
@@ -88,7 +89,8 @@ public class WarehouseClient {
 
 	private void testGetProductsByType(){
 		System.out.println("Please input product type:");
-		String productType = in.next();
+		String productType = in.nextLine();
+		System.out.println("productType:" + productType);
 		Item[] itemArray = warehouse.getProductsByType(productType);
 		System.out.println("There are " + itemArray.length + " items");
 		for(Item item: itemArray){
@@ -99,7 +101,7 @@ public class WarehouseClient {
 
 	private void testGetProductsByManufactureId(){
 		System.out.println("Please input manufacture ID:");
-		String manufactureID = in.next();
+		String manufactureID = in.nextLine();
 		Item[] itemArray = warehouse.getProductsByRegisteredManufacturers(manufactureID);
 		System.out.println("There are " + itemArray.length + " items");
 		for(Item item: itemArray){
@@ -111,9 +113,10 @@ public class WarehouseClient {
 	private void testGetProductsPerManufacturer(){
 		try{
 			System.out.println("Please input manufacturer ID:");
-			String manufacturerID = in.next();
+			String manufacturerID = in.nextLine();
 			System.out.println("Please input product ID:");
 			int productID = in.nextInt();
+			in.nextLine();
 			Item[] itemArray = warehouse.getProducts(productID, manufacturerID);
 			System.out.println("There are " + itemArray.length + " items");
 			for(Item item: itemArray){
@@ -137,9 +140,9 @@ public class WarehouseClient {
 	private void testUnregisteringRetailer(){
 		System.out.println("Will unregister:" + name);
 		if(warehouse.unregisterRegailer(name)){
-			System.out.println("Registering is done Successfully.");
+			System.out.println("UnRegistering is done Successfully.");
 		}else{
-			System.out.println("Failed to do registration.");
+			System.out.println("Failed to do unRegistration.");
 		}
 	}
 
@@ -183,7 +186,7 @@ public class WarehouseClient {
 
 			System.out.println("\tq for QUIT.");
 
-			cmd = warehouseClient.in.next();
+			cmd = warehouseClient.in.nextLine();
 			if(cmd.equals("1")){
 				warehouseClient.testGetProductsById();
 			}else if(cmd.equals("2")){
