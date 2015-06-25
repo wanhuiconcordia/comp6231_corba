@@ -9,13 +9,13 @@ public class ProductImpl extends Product {
 			String productType,
 			float unitPrice
 			){
-		this.productID = (manufacturerName + productType).hashCode();
+		this.productID = String.valueOf((manufacturerName + productType).hashCode());
 		this.manufacturerName = manufacturerName;
 		this.productType = productType;
 		this.unitPrice = unitPrice;
 	}
 	
-	public ProductImpl(int productID,
+	public ProductImpl(String productID,
 			String manufacturerName,
 			String productType,
 			float unitPrice

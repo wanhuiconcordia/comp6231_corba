@@ -85,7 +85,7 @@ class RetailerServant extends RetailerPOA {
 	@Override
 	public Item[] getCatalog(int customerReferenceNumber) {
 		ArrayList<Item> allItems = new ArrayList<Item>();
-		HashMap<Integer, Item> itemsMap = new HashMap<Integer, Item>();
+		HashMap<String, Item> itemsMap = new HashMap<String, Item>();
 		
 		Customer currentCustomer = customerManager.getCustomerByReferenceNumber(customerReferenceNumber);
 		if(currentCustomer == null){
@@ -93,9 +93,9 @@ class RetailerServant extends RetailerPOA {
 			return null;
 		}
 		for(int i = 0; i < warehouseList.size(); i++){
-			Item[] itemListFromWarehouse = warehouseList.get(i).getProducts(0, "");
+			Item[] itemListFromWarehouse = warehouseList.get(i).getProducts("", "");
 			for(Item item: itemListFromWarehouse){
-				int key = item.productID;
+				String key = item.productID;
 				Item itemInMap = itemsMap.get(key); 
 				if(itemInMap == null){
 					itemsMap.put(key, item);// item.clone() changes to item ?
@@ -127,7 +127,7 @@ class RetailerServant extends RetailerPOA {
 			loggerClient.write(name + ": empty order list.");
 			return null;
 		}else{
-			HashMap<Integer, ItemShippingStatus> itemShippingStatusMap = new HashMap<Integer, ItemShippingStatus>(); 
+			HashMap<String, ItemShippingStatus> itemShippingStatusMap = new HashMap<String, ItemShippingStatus>(); 
 			int []randomOrder = getRandOrder(warehouseList.size());
 			Item[] itemsGotFromCurrentWarehouse;
 			for(int currentWarehouseIndex: randomOrder){
@@ -146,7 +146,7 @@ class RetailerServant extends RetailerPOA {
 					}
 					
 					for(Item item: itemsGotFromCurrentWarehouse){
-						int key = item.productID;
+						String key = item.productID;
 						ItemShippingStatus itemShippingStatus = itemShippingStatusMap.get(key);
 						if(itemShippingStatus == null){
 							itemShippingStatusMap.put(key, new ItemShippingStatusImpl(item, true));
@@ -217,14 +217,14 @@ class RetailerServant extends RetailerPOA {
 	}
 
 	@Override
-	public Item[] getProducts(int productID) {
+	public Item[] getProducts(String productID) {
 		ArrayList<Item> allItems = new ArrayList<Item>();
-		HashMap<Integer, Item> itemsMap = new HashMap<Integer, Item>();
+		HashMap<String, Item> itemsMap = new HashMap<String, Item>();
 
 		for(int i = 0; i < warehouseList.size(); i++){
 			Item[] itemListFromWarehouse = warehouseList.get(i).getProductsByID(productID);
 			for(Item item: itemListFromWarehouse){
-				int key = item.productID;
+				String key = item.productID;
 				Item itemInMap = itemsMap.get(key); 
 				if(itemInMap == null){
 					itemsMap.put(key, item);// item.clone() changes to item ?

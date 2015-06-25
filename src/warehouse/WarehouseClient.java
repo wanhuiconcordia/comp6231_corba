@@ -72,8 +72,7 @@ public class WarehouseClient {
 	private void testGetProductsById(){
 		System.out.println("Please input product ID:");
 		try{
-			int productID = in.nextInt();
-			in.nextLine();
+			String productID = in.nextLine();
 			Item[] itemArray = warehouse.getProductsByID(productID);
 //			
 		//	System.out.println("There are " + itemArray.length + " items");
@@ -115,8 +114,8 @@ public class WarehouseClient {
 			System.out.println("Please input manufacturer ID:");
 			String manufacturerID = in.nextLine();
 			System.out.println("Please input product ID:");
-			int productID = in.nextInt();
-			in.nextLine();
+			String productID = in.nextLine();
+			
 			Item[] itemArray = warehouse.getProducts(productID, manufacturerID);
 			System.out.println("There are " + itemArray.length + " items");
 			for(Item item: itemArray){
@@ -147,7 +146,7 @@ public class WarehouseClient {
 	}
 
 	private void testShippingGoods(){
-		Item []itemArray1 = warehouse.getProductsByID(-1);
+		Item []itemArray1 = warehouse.getProductsByID("");
 
 
 		Item[] itemArray = warehouse.shippingGoods(itemArray1);

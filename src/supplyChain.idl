@@ -1,7 +1,7 @@
 
 module tools{
 	valuetype Product{
-		public long productID; 
+		public string productID; 
 		public string manufacturerName;
 		public string productType;
 		public float unitPrice;
@@ -47,17 +47,17 @@ module retailer{
 		tools::SignUpResult signUp(in string name, in string password, in string street1, 
 			in string street2, in string city, in string state, in string zip, in string country);
 		tools::Customer signIn(in long customerReferenceNumber,in string password);
-		tools::ItemList getProducts(in long productID);
+		tools::ItemList getProducts(in string productID);
 		oneway void shutdown();
 	};
 };
 
 module warehouse{
 	interface Warehouse{
-		tools::ItemList getProductsByID(in long productID);// get the specific product by id, if null/empty, all returned
+		tools::ItemList getProductsByID(in string productID);// get the specific product by id, if null/empty, all returned
 		tools::ItemList getProductsByType(in string productType);// get a list of products by product type, if null/mpty,all returned
 		tools::ItemList getProductsByRegisteredManufacturers(in string manufacturerName);//get a list of products by manufacturer name,if null/empty, all returned
-		tools::ItemList getProducts(in long productID, in string manufacturerName);
+		tools::ItemList getProducts(in string productID, in string manufacturerName);
 		boolean registerRetailer(in string retailerName);
 		boolean unregisterRegailer(in string retailerName);
 		tools::ItemList shippingGoods(in tools::ItemList itemList);

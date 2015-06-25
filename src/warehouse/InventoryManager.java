@@ -37,7 +37,7 @@ public class InventoryManager {
 	public Element toXmlElement(Item i){
 		DefaultElement customerElem = new DefaultElement("item");
 		Element subElem = customerElem.addElement("productID");
-		subElem.setText(String.valueOf(i.productID));
+		subElem.setText(i.productID);
 		subElem = customerElem.addElement("manufacturerName");
 		subElem.setText(i.manufacturerName);
 		

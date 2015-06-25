@@ -25,7 +25,7 @@ public class ItemShippingStatusImpl extends ItemShippingStatus {
 			int quantity,
 			boolean shippingStatus
 			){
-		this.productID = (manufacturerName + productType).hashCode();
+		this.productID = String.valueOf((manufacturerName + productType).hashCode());
 		this.manufacturerName = manufacturerName;
 		this.productType = productType;
 		this.unitPrice = unitPrice;
@@ -33,7 +33,7 @@ public class ItemShippingStatusImpl extends ItemShippingStatus {
 		this.shippingStatus = shippingStatus;
 	}
 
-	public ItemShippingStatusImpl(int productID,
+	public ItemShippingStatusImpl(String productID,
 			String manufacturerName,
 			String productType,
 			float unitPrice,

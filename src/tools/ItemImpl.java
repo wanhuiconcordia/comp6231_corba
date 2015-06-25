@@ -13,14 +13,14 @@ public class ItemImpl extends Item {
 			float unitPrice,
 			int quantity
 			){
-		this.productID = (manufacturerName + productType).hashCode();
+		this.productID = String.valueOf((manufacturerName + productType).hashCode());
 		this.manufacturerName = manufacturerName;
 		this.productType = productType;
 		this.unitPrice = unitPrice;
 		this.quantity = quantity;
 	}
 	
-	public ItemImpl(int productID,
+	public ItemImpl(String productID,
 			String manufacturerName,
 			String productType,
 			float unitPrice,
@@ -97,7 +97,7 @@ public class ItemImpl extends Item {
 		DefaultElement customerElem = new DefaultElement("item");
 		
 		Element subElem = customerElem.addElement("productID");
-		subElem.setText(String.valueOf(productID));
+		subElem.setText(productID);
 		
 		subElem = customerElem.addElement("manufacturerName");
 		subElem.setText(manufacturerName);

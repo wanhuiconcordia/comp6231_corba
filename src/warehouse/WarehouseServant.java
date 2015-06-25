@@ -222,35 +222,34 @@ public class WarehouseServant extends WarehousePOA {
 
 	}
 	//@Override
-	public Item[] getProducts(int productID, String manufacturerName) {
+	public Item[] getProducts(String productID, String manufacturerName) {
 		// TODO Auto-generated method stub
 
 		Item[] returnitem=new Item[0];
-		if((productID != -1)){
-			
-			for(String inventorykey:inventoryManager.inventoryItemMap.keySet()){
-				int hashofkey=inventorykey.hashCode();
-				System.out.println("hashcode"+hashofkey+"key"+ inventorykey);
-				if(productID==hashofkey){
-					Item inventoryItem = inventoryManager.inventoryItemMap.get(inventorykey);
-			
-			if(inventoryItem != null){
-
-				returnitem=add(returnitem,inventoryItem);
-
-			}
-				}
-			}
-
-		}
-		else{
-
+		
+		if(productID == null){
 			for(Item i:inventoryManager.inventoryItemMap.values()){
 
 				returnitem=add(returnitem,i);
 			}
+		}else if(productID.isEmpty()){
+			for(Item i:inventoryManager.inventoryItemMap.values()){
 
+				returnitem=add(returnitem,i);
+			}
+		}else{
+			for(String inventorykey:inventoryManager.inventoryItemMap.keySet()){
+				int hashofkey=inventorykey.hashCode();
+				System.out.println("hashcode"+hashofkey+"key"+ inventorykey);
+				if(productID.equals(String.valueOf(hashofkey))){
+					Item inventoryItem = inventoryManager.inventoryItemMap.get(inventorykey);
+					if(inventoryItem != null){
+						returnitem=add(returnitem,inventoryItem);
+					}
+				}
+			}
 		}
+
 		System.out.println("return itemlist size"+returnitem.length);
 		return returnitem;
 	}
@@ -305,15 +304,26 @@ public class WarehouseServant extends WarehousePOA {
 	}
 	@Override
 
-	public Item[] getProductsByID(int productID) {
+	public Item[] getProductsByID(String productID) {
 		// TODO Auto-generated method stub
 		System.out.println("getProductsByID is called:" + productID);
 		Item[] returnitem=new Item[0];
-		if((productID) != -1){
+		
+		if(productID == null){
+			for(Item i:inventoryManager.inventoryItemMap.values()){
+
+				returnitem=add(returnitem,i);
+			}
+		}else if(productID.isEmpty()){
+			for(Item i:inventoryManager.inventoryItemMap.values()){
+
+				returnitem=add(returnitem,i);
+			}
+		}else{
 			for(String inventorykey:inventoryManager.inventoryItemMap.keySet()){
 				int hashofkey=inventorykey.hashCode();
 				System.out.println("hashcode"+hashofkey+"key"+ inventorykey);
-				if(productID==hashofkey){
+				if(productID.equals(String.valueOf(hashofkey))){
 					Item inventoryItem = inventoryManager.inventoryItemMap.get(inventorykey);
 					
 					if(inventoryItem != null){
@@ -323,21 +333,8 @@ public class WarehouseServant extends WarehousePOA {
 					}
 				}
 			}
-
-			
-
-		}
-		else{
-
-			for(Item i:inventoryManager.inventoryItemMap.values()){
-
-				returnitem=add(returnitem,i);
-			}
-
 		}
 		System.out.println("return itemlist size"+returnitem.length);
 		return returnitem;
 	}
-
-
 }
