@@ -63,6 +63,6 @@ public class ItemShippingStatusImpl extends ItemShippingStatus {
 				+ ", " + productType
 				+ ", " + unitPrice
 				+ ", " + quantity
-				+ ", " + shippingStatus;
+				+ ", " + (shippingStatus ? "shipped" : "unshipped");
 	}
 }

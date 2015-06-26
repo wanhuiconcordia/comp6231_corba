@@ -6,7 +6,6 @@ import org.dom4j.tree.DefaultElement;
 public class ItemImpl extends Item {
 	
 	protected static final long serialVersionUID = -1927708729616470764L;
-	public int quantity;
 
 	public ItemImpl(String manufacturerName,
 			String productType,

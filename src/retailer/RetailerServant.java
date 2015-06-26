@@ -116,25 +116,20 @@ class RetailerServant extends RetailerPOA {
 
 	@Override
 	public ItemShippingStatus[] submitOrder(int customerReferenceNumber, Item[] itemOrderArray) {
-		System.out.println("submitOrder is called");
 		ItemShippingStatusImpl []itemShippingStatusArray = new ItemShippingStatusImpl[0];
 		Customer currentCustomer = customerManager.getCustomerByReferenceNumber(customerReferenceNumber);
 		if(currentCustomer == null){
-			System.out.println("test1");
 			loggerClient.write(name + ": customer reference number can not be found in customer database.");
 			return itemShippingStatusArray;
 		}
 		
 		if(itemOrderArray == null){
-			System.out.println("test2");
 			loggerClient.write(name + ": null order list.");
 			return itemShippingStatusArray;
 		}else if(itemOrderArray.length == 0){
-			System.out.println("test3");
 			loggerClient.write(name + ": empty order list.");
 			return itemShippingStatusArray;
 		}else{
-			System.out.println("test4 itemOrderArray.size:" + itemOrderArray.length);
 			HashMap<String, ItemShippingStatus> receivedItemShippingStatusMap = new HashMap<String, ItemShippingStatus>();
 			HashMap<String, Item> orderMap = new HashMap<String, Item>();
 			for(Item item: itemOrderArray){
@@ -151,23 +146,22 @@ class RetailerServant extends RetailerPOA {
 			}
 			
 			for(Warehouse thisWarehouse: warehouseList){
-				System.out.println("test5");
 				int itemRequestFromWarehouseCount = orderMap.size();
 				if(itemRequestFromWarehouseCount > 0)
 				{
-					System.out.println("test6");
 					Item[] itemRequestFromWarehouseArray = new Item[itemRequestFromWarehouseCount];
 					int i = 0;
 					for(Item orderItem: orderMap.values()){
 						itemRequestFromWarehouseArray[i] = orderItem;
+						i++;
 					}
+					
 					Item [] itemsGotFromCurrentWarehouse = thisWarehouse.shippingGoods(itemRequestFromWarehouseArray);
 					if(itemsGotFromCurrentWarehouse == null){
 						System.out.println("warehouse return null");
 					}else if(itemsGotFromCurrentWarehouse.length == 0){
 						System.out.println("warehouse return empty arrry");
 					}else{
-						System.out.println("warehouse return :" + itemsGotFromCurrentWarehouse.length);
 						String log = new String();
 						for(Item item: itemsGotFromCurrentWarehouse){
 							Item itemInReceivedItemShippingStatusMap = receivedItemShippingStatusMap.get(item.productID);
@@ -202,11 +196,6 @@ class RetailerServant extends RetailerPOA {
 				itemShippingStatusArray[i] = new ItemShippingStatusImpl(itemInOrderMap, false); 
 				i++;
 			}
-			
-			for(ItemShippingStatusImpl t:itemShippingStatusArray){
-				System.out.println(t.toString());
-			}
-			
 			
 			return itemShippingStatusArray;
 		}

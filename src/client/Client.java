@@ -233,7 +233,7 @@ public class Client
 				if(log.length() > 0){
 					loggerClient.write(log);
 				}
-
+				
 				ItemShippingStatus []itemShippingStatusArray ;
 				itemShippingStatusArray = retailer.submitOrder(currentCustomer.customerReferenceNumber, itemImplArray);
 				if(itemShippingStatusArray == null){
@@ -241,6 +241,7 @@ public class Client
 				}else if(itemShippingStatusArray.length == 0){
 					System.out.println("submitOrder return an empty array.");
 				}else{
+					System.out.println("Return itemShippingStatus:");
 					for(ItemShippingStatus itemShippingStatus : itemShippingStatusArray){
 						ItemShippingStatusImpl impl = new ItemShippingStatusImpl(itemShippingStatus);
 						System.out.println(impl.toString());
