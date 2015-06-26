@@ -16,6 +16,7 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import tools.Customer;
 import tools.Item;
+import tools.ItemImpl;
 import tools.ItemShippingStatus;
 import tools.ItemShippingStatusImpl;
 import tools.LoggerClient;
@@ -84,16 +85,15 @@ class RetailerServant extends RetailerPOA {
 
 	@Override
 	public Item[] getCatalog(int customerReferenceNumber) {
-		ArrayList<Item> allItems = new ArrayList<Item>();
 		HashMap<String, Item> itemsMap = new HashMap<String, Item>();
-		
 		Customer currentCustomer = customerManager.getCustomerByReferenceNumber(customerReferenceNumber);
 		if(currentCustomer == null){
 			loggerClient.write(name + ": customer reference number can not be found in customer database.");
 			return null;
 		}
 		for(int i = 0; i < warehouseList.size(); i++){
-			Item[] itemListFromWarehouse = warehouseList.get(i).getProducts("", "");
+			Item[] itemListFromWarehouse = warehouseList.get(i).getProductsByID("");
+			System.out.println("itemListFromWarehouse.length:" + itemListFromWarehouse.length);
 			for(Item item: itemListFromWarehouse){
 				String key = item.productID;
 				Item itemInMap = itemsMap.get(key); 
@@ -105,102 +105,110 @@ class RetailerServant extends RetailerPOA {
 			}
 		}
 		
-
+		Item[]itemArray = new Item[itemsMap.size()];
+		int i = 0;
 		for(Item item: itemsMap.values()){
-			allItems.add(item);
+			itemArray[i++] = item;
 		}
-		return (Item[]) allItems.toArray();
+		return itemArray;
 	}
 		
 
 	@Override
-	public ItemShippingStatus[] submitOrder(int customerReferenceNumber, Item[] itemList) {
-		List<Item> orderItemList = Arrays.asList(itemList);
+	public ItemShippingStatus[] submitOrder(int customerReferenceNumber, Item[] itemOrderArray) {
+		System.out.println("submitOrder is called");
+		ItemShippingStatusImpl []itemShippingStatusArray = new ItemShippingStatusImpl[0];
 		Customer currentCustomer = customerManager.getCustomerByReferenceNumber(customerReferenceNumber);
 		if(currentCustomer == null){
+			System.out.println("test1");
 			loggerClient.write(name + ": customer reference number can not be found in customer database.");
-			return null;
-		}else if(orderItemList == null){
+			return itemShippingStatusArray;
+		}
+		
+		if(itemOrderArray == null){
+			System.out.println("test2");
 			loggerClient.write(name + ": null order list.");
-			return null;
-		}else if((orderItemList.size()) == 0){
+			return itemShippingStatusArray;
+		}else if(itemOrderArray.length == 0){
+			System.out.println("test3");
 			loggerClient.write(name + ": empty order list.");
-			return null;
+			return itemShippingStatusArray;
 		}else{
-			HashMap<String, ItemShippingStatus> itemShippingStatusMap = new HashMap<String, ItemShippingStatus>(); 
-			int []randomOrder = getRandOrder(warehouseList.size());
-			Item[] itemsGotFromCurrentWarehouse;
-			for(int currentWarehouseIndex: randomOrder){
-				itemsGotFromCurrentWarehouse = warehouseList.get(currentWarehouseIndex).shippingGoods(itemList);
-				
-				if(itemsGotFromCurrentWarehouse != null){
-					loggerClient.write(name + ": Items got from " + warehouseList.get(currentWarehouseIndex).getName());
-					String log = new String();
-					for(Item item: itemsGotFromCurrentWarehouse){
-						//System.out.println(item.toString());
-						log = log + item.toString() + "</br>";
+			System.out.println("test4 itemOrderArray.size:" + itemOrderArray.length);
+			HashMap<String, ItemShippingStatus> receivedItemShippingStatusMap = new HashMap<String, ItemShippingStatus>();
+			HashMap<String, Item> orderMap = new HashMap<String, Item>();
+			for(Item item: itemOrderArray){
+				ItemImpl itemImpl = new ItemImpl(item);
+				System.out.println(itemImpl.toString());
+				if(item.quantity > 0){
+					Item itemInOrderMap = orderMap.get(item.productID);
+					if(itemInOrderMap == null){
+						orderMap.put(item.productID, new ItemImpl(item));
+					}else{
+						itemInOrderMap.quantity += item.quantity;
 					}
-					
-					if(log.length() > 0){
-						loggerClient.write(log);
+				}
+			}
+			
+			for(Warehouse thisWarehouse: warehouseList){
+				System.out.println("test5");
+				int itemRequestFromWarehouseCount = orderMap.size();
+				if(itemRequestFromWarehouseCount > 0)
+				{
+					System.out.println("test6");
+					Item[] itemRequestFromWarehouseArray = new Item[itemRequestFromWarehouseCount];
+					int i = 0;
+					for(Item orderItem: orderMap.values()){
+						itemRequestFromWarehouseArray[i] = orderItem;
 					}
-					
-					for(Item item: itemsGotFromCurrentWarehouse){
-						String key = item.productID;
-						ItemShippingStatus itemShippingStatus = itemShippingStatusMap.get(key);
-						if(itemShippingStatus == null){
-							itemShippingStatusMap.put(key, new ItemShippingStatusImpl(item, true));
-						}else{
-							itemShippingStatus.quantity = itemShippingStatus.quantity + item.quantity;
-						}
-					}
-					
+					Item [] itemsGotFromCurrentWarehouse = thisWarehouse.shippingGoods(itemRequestFromWarehouseArray);
+					if(itemsGotFromCurrentWarehouse == null){
+						System.out.println("warehouse return null");
+					}else if(itemsGotFromCurrentWarehouse.length == 0){
+						System.out.println("warehouse return empty arrry");
+					}else{
+						System.out.println("warehouse return :" + itemsGotFromCurrentWarehouse.length);
+						String log = new String();
+						for(Item item: itemsGotFromCurrentWarehouse){
+							Item itemInReceivedItemShippingStatusMap = receivedItemShippingStatusMap.get(item.productID);
+							if(itemInReceivedItemShippingStatusMap == null){
+								receivedItemShippingStatusMap.put(item.productID, new ItemShippingStatusImpl(item, true));
+							}else{
+								itemInReceivedItemShippingStatusMap.quantity += item.quantity;
+							}
 
-					for (int i = 0; i < orderItemList.size();) {
-						Item item = orderItemList.get(i);
-						for(Item item_t: itemsGotFromCurrentWarehouse){
-							if(item.manufacturerName.equals(item_t.manufacturerName)
-								&&(item.productType.equals(item_t.productType))
-								&&(item.unitPrice == item_t.unitPrice)){
-								
-									item.quantity = item.quantity - item_t.quantity;
+							Item itemInOrderMap = orderMap.get(item.productID);
+							if(itemInOrderMap == null){
+								System.out.println("Warehouse side error. never request this item from warehouse, but the warehouse return this item.");
+							}else{
+								itemInOrderMap.quantity -= item.quantity;
+								if(itemInOrderMap.quantity == 0){
+									orderMap.remove(item.productID);
+								}
 							}
 						}
-						if(item.quantity == 0){
-							orderItemList.remove(i);
-						}else{
-							i++;
-						}
 					}
-				}					
-
-				//if no more item in orderItemList break;
-				if(orderItemList.isEmpty()){
+				}else{
 					break;
 				}
 			}
-			//if there are still some items in orderItemList, put them in to inhandItemShippingStatusList and mark their shippingStatus as false
-
-			ArrayList<ItemShippingStatus> itemShippingStatusList = new ArrayList<ItemShippingStatus>();
-			for(ItemShippingStatus itemShippingStatus: itemShippingStatusMap.values()){
-				itemShippingStatusList.add(itemShippingStatus);
+			itemShippingStatusArray = new ItemShippingStatusImpl[receivedItemShippingStatusMap.size() + orderMap.size()];
+			int i = 0;
+			for(ItemShippingStatus itemInReceivedItemShippingStatusMap: receivedItemShippingStatusMap.values()){
+				itemShippingStatusArray[i] = new ItemShippingStatusImpl(itemInReceivedItemShippingStatusMap); 
+				i++;
+			}
+			for(Item itemInOrderMap: orderMap.values()){
+				itemShippingStatusArray[i] = new ItemShippingStatusImpl(itemInOrderMap, false); 
+				i++;
 			}
 			
-			if(!orderItemList.isEmpty()){
-				for(Item item: orderItemList){
-					itemShippingStatusList.add(new ItemShippingStatusImpl(item, false));
-				}
+			for(ItemShippingStatusImpl t:itemShippingStatusArray){
+				System.out.println(t.toString());
 			}
 			
-			String log = new String();
-			for(ItemShippingStatus itemShippingStatus: itemShippingStatusList){
-				log = log + itemShippingStatus.toString() + "</br>";
-			}
-			if(log.length() > 0){
-				loggerClient.write(name + ": item shipping status will be sent to client.");
-				loggerClient.write(log);
-			}
-			return (ItemShippingStatus[]) itemShippingStatusList.toArray();
+			
+			return itemShippingStatusArray;
 		}
 	}
 

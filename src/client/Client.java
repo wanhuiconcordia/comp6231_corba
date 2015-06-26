@@ -179,7 +179,7 @@ public class Client
 			if(itemArray == null){
 				System.out.println("Retailer return null");
 			}else if(itemArray.length == 0){
-				System.out.println("Retailer return null");
+				System.out.println("Retailer return empty array");
 			}else{
 				System.out.println("Retailer item catalog:");
 				for(Item item: itemArray){
@@ -234,15 +234,16 @@ public class Client
 					loggerClient.write(log);
 				}
 
-				ItemShippingStatusImpl []itemShippingStatusImplArray;
-				itemShippingStatusImplArray = (ItemShippingStatusImpl[]) retailer.submitOrder(currentCustomer.customerReferenceNumber, itemImplArray);
-				if(itemShippingStatusImplArray == null){
+				ItemShippingStatus []itemShippingStatusArray ;
+				itemShippingStatusArray = retailer.submitOrder(currentCustomer.customerReferenceNumber, itemImplArray);
+				if(itemShippingStatusArray == null){
 					System.out.println("submitOrder return null.");
-				}else if(itemShippingStatusImplArray.length == 0){
+				}else if(itemShippingStatusArray.length == 0){
 					System.out.println("submitOrder return an empty array.");
 				}else{
-					for(ItemShippingStatusImpl itemShippingStatusImpl : itemShippingStatusImplArray){
-						System.out.println(itemShippingStatusImpl.toString());
+					for(ItemShippingStatus itemShippingStatus : itemShippingStatusArray){
+						ItemShippingStatusImpl impl = new ItemShippingStatusImpl(itemShippingStatus);
+						System.out.println(impl.toString());
 					}
 				}
 			}
