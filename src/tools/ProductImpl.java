@@ -1,10 +1,24 @@
 package tools;
 
+/**
+ * @author comp6231.team5
+ * The implementation of Product
+ */
 public class ProductImpl extends Product {
+	
+	/**
+	 * Constructor 
+	 */
 	public ProductImpl(){
 		
 	}
-	
+		
+	/**
+	 * Constructor
+	 * @param manufacturerName
+	 * @param productType
+	 * @param unitPrice
+	 */
 	public ProductImpl(String manufacturerName,
 			String productType,
 			float unitPrice
@@ -15,6 +29,13 @@ public class ProductImpl extends Product {
 		this.unitPrice = unitPrice;
 	}
 	
+	/**
+	 * Constructor
+	 * @param productID
+	 * @param manufacturerName
+	 * @param productType
+	 * @param unitPrice
+	 */
 	public ProductImpl(String productID,
 			String manufacturerName,
 			String productType,
@@ -26,43 +47,15 @@ public class ProductImpl extends Product {
 		this.unitPrice = unitPrice;
 	}
 	
+	/**
+	 * Constructor
+	 * @param product
+	 */
 	public ProductImpl(Product product){
 		this.productID = product.productID;
 		this.manufacturerName = product.manufacturerName;
 		this.productType = product.productType;
 		this.unitPrice = product.unitPrice;
-	}
-	
-	/**
-	 * determine if the current product is the same as the other one
-	 * @param otherProduct
-	 * @return true if the same, false if not
-	 */
-	public boolean isSame(Product otherProduct){
-		return (manufacturerName == otherProduct.manufacturerName)
-				&& (productType == otherProduct.productType)
-				&& (unitPrice == otherProduct.unitPrice);
-	}
-	
-	/**
-	 * @return manufacturer name
-	 */
-	public String getManufacturerName(){
-		return manufacturerName;
-	}
-	
-	/**
-	 * @return product type
-	 */
-	public String getProductType(){
-		return productType;
-	}
-	
-	/**
-	 * @return
-	 */
-	public float getUnitPrice(){
-		return unitPrice;
 	}
 	
 	/* (non-Javadoc)
@@ -72,6 +65,9 @@ public class ProductImpl extends Product {
 		return new ProductImpl(this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString(){
 		return productID
 				+ ", " + manufacturerName

@@ -3,10 +3,21 @@ package tools;
 import org.dom4j.Element;
 import org.dom4j.tree.DefaultElement;
 
+/**
+ * @author comp6231.team5
+ * The implementation of Item
+ */
 public class ItemImpl extends Item {
 	
 	protected static final long serialVersionUID = -1927708729616470764L;
-
+	
+	/**
+	 * Constructor
+	 * @param manufacturerName
+	 * @param productType
+	 * @param unitPrice
+	 * @param quantity
+	 */
 	public ItemImpl(String manufacturerName,
 			String productType,
 			float unitPrice,
@@ -19,6 +30,13 @@ public class ItemImpl extends Item {
 		this.quantity = quantity;
 	}
 	
+	/**
+	 * @param productID
+	 * @param manufacturerName
+	 * @param productType
+	 * @param unitPrice
+	 * @param quantity
+	 */
 	public ItemImpl(String productID,
 			String manufacturerName,
 			String productType,
@@ -32,6 +50,10 @@ public class ItemImpl extends Item {
 		this.quantity = quantity;
 	}
 	
+	/**
+	 * Constructor
+	 * @param item
+	 */
 	public ItemImpl(Item item){
 		this.productID = item.productID;
 		this.manufacturerName = item.manufacturerName;
@@ -46,10 +68,16 @@ public class ItemImpl extends Item {
 		return new ProductImpl(productID, manufacturerName, productType, unitPrice);
 	}
 	
+	/**
+	 * Constructor 
+	 */
 	public ItemImpl() {
 		// TODO Auto-generated constructor stub
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString(){
 		return productID
 				+ ", " + manufacturerName
@@ -58,36 +86,13 @@ public class ItemImpl extends Item {
 				+ ", " + unitPrice;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
 	public ItemImpl clone(){
 		return new ItemImpl(productID, manufacturerName, productType, unitPrice, quantity);
 	}
 	
-
-	/**
-	 * @return quantity of the item
-	 */
-	public int getQuantity(){
-		return quantity;
-	}
-	
-	/**
-	 * @param q
-	 */
-	public void setQuantity(int q){
-		quantity = q;
-	}
-	
-	
-	/**
-	 * determine whether the current item is the same as the other item
-	 * @param otherItem
-	 * @return ture if the same, false if not
-	 */
-	public boolean isSameProductAs(Item otherItem){
-		return (this.manufacturerName.equals(otherItem.manufacturerName))
-				&& (this.productType.equals(otherItem.productType))
-				&& (this.unitPrice == otherItem.unitPrice);
-	}
 	/**
 	 * save the current item to an  Element object
 	 * @return the Element object

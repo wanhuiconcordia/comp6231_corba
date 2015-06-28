@@ -12,6 +12,10 @@ import tools.Item;
 import tools.ItemImpl;
 import tools.LoggerClient;
 
+/**
+ * @author comp6231.team5
+ * Provide full functionality testing to warehouse
+ */
 public class WarehouseClient {
 
 	private Warehouse warehouse;
@@ -20,6 +24,12 @@ public class WarehouseClient {
 	private LoggerClient loggerClient;
 	private String name;
 
+	/**
+	 * Initialize orb
+	 * Resolve name service
+	 * @param args
+	 * @return
+	 */
 	boolean initializeOrbEnvirement(String args[]){
 		// create and initialize the ORB
 		ORB orb = ORB.init(args, null);
@@ -38,14 +48,20 @@ public class WarehouseClient {
 		}
 	}
 
+	/**
+	 * Constructor
+	 */
 	public WarehouseClient() {
 		name = "warehouseClient";
 		in = new Scanner(System.in);
 		loggerClient = new LoggerClient();
 	}
 
+	/**
+	 * Provide interface for user to input warehouses' names for connecting
+	 * @return
+	 */
 	public boolean connectWarehouse(){
-
 		System.out.print("Please input warehouse name to establish connection:");
 		String warehouseName = in.nextLine();
 
@@ -69,6 +85,9 @@ public class WarehouseClient {
 		return false;
 	}
 
+	/**
+	 * test getProductsById(String)
+	 */
 	private void testGetProductsById(){
 		System.out.println("Please input product ID:");
 		try{
@@ -86,6 +105,9 @@ public class WarehouseClient {
 		}
 	}		
 
+	/**
+	 * test getProductsByType(String)
+	 */
 	private void testGetProductsByType(){
 		System.out.println("Please input product type:");
 		String productType = in.nextLine();
@@ -98,6 +120,10 @@ public class WarehouseClient {
 		}
 	}
 
+	
+	/**
+	 * test getProductsByManufactureId(String)
+	 */
 	private void testGetProductsByManufactureId(){
 		System.out.println("Please input manufacture ID:");
 		String manufactureID = in.nextLine();
@@ -109,6 +135,9 @@ public class WarehouseClient {
 		}
 	}
 
+	/**
+	 * test getProductsPerManufacturer(String, String)
+	 */
 	private void testGetProductsPerManufacturer(){
 		try{
 			System.out.println("Please input manufacturer ID:");
@@ -127,6 +156,9 @@ public class WarehouseClient {
 		}
 	}
 
+	/**
+	 * test registeringRetailer(String)
+	 */
 	private void testRegisteringRetailer(){
 		System.out.println("Will register:" + name);
 		if(warehouse.registerRetailer(name)){
@@ -136,6 +168,10 @@ public class WarehouseClient {
 		}
 	}
 
+	
+	/**
+	 * test unregisteringRetailer(String) 
+	 */
 	private void testUnregisteringRetailer(){
 		System.out.println("Will unregister:" + name);
 		if(warehouse.unregisterRegailer(name)){
@@ -145,6 +181,9 @@ public class WarehouseClient {
 		}
 	}
 
+	/**
+	 * test Item[] itemArray = warehouse.shippingGoods(Item[])
+	 */
 	private void testShippingGoods(){
 		Item []itemArray1 = warehouse.getProductsByID("");
 
@@ -157,6 +196,9 @@ public class WarehouseClient {
 		}
 	}
 
+	/**
+	 * test shuttingDownWarehouse()
+	 */
 	private void testShuttingDownWarehouse(){
 		warehouse.shutdown();
 		System.out.println("warehouse is shutdown propperly.");

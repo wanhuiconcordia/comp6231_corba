@@ -8,16 +8,33 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
 
+/**
+ * @author comp6231.team5
+ * The bridge between retailers and manufacturers
+ * Provide services for retailers
+ * Ask for items and get item information from manufacturers
+ */
 public class WarehouseServer {
 	private String name;
 	private WarehouseServant warehouseServant;
 	
+	/**
+	 * Constructor
+	 */
 	public WarehouseServer(){
 		Scanner in=new Scanner(System.in);
 		System.out.println("Enter name of the warehouse");
 		name=in.next();
-
 	}
+	
+	/**
+	 * @param args
+	 * initialize orb;
+	 * resolve name service
+	 * provide interface for user to input manufacturers' names
+	 * @return
+	 */
+	
 	public void bind(String [] args){
 		try{
 

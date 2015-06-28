@@ -20,6 +20,10 @@ import manufacturer.ManufacturerServant;
 import tools.LoggerClient;
 
 
+/**
+ * ManufacturerServer provide service for warehouses
+ * @author comp6231.team5
+ */
 public class ManufacturerServer {
 	
 	private ORB orb;
@@ -49,7 +53,13 @@ public class ManufacturerServer {
 		System.out.println("HelloServer Exiting ...");
 	}
 	
-	
+	/**
+	 * @param args
+	 * initialize orb;
+	 * resolve name service
+	 * provide interface for user to input manufacturer name
+	 * @return
+	 */
 	boolean initializeOrbEnvirement(String args[]){
 		// create and initialize the ORB
 		orb = ORB.init(args, null);

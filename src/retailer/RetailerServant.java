@@ -24,6 +24,10 @@ import tools.SignUpResult;
 import warehouse.Warehouse;
 import warehouse.WarehouseHelper;
 
+/**
+ * @author comp6231.team5
+ * Servant of retailer
+ */
 class RetailerServant extends RetailerPOA {
 	private ORB orb;
 	private CustomerManager customerManager;
@@ -31,6 +35,11 @@ class RetailerServant extends RetailerPOA {
 	private ArrayList<Warehouse> warehouseList;
 	private String name;
 	
+	/**
+	 * Constructor
+	 * @param orb
+	 * @param loggerClient
+	 */
 	public RetailerServant(ORB orb, LoggerClient loggerClient){
 		name = "RetailerServant";
 		this.orb = orb;
@@ -39,6 +48,10 @@ class RetailerServant extends RetailerPOA {
 		customerManager = new CustomerManager("customers.xml");
 	}
 
+	/**
+	 * Provide interface for user to input the warehouses' names for connecting
+	 * @param in
+	 */
 	public void connectWarehouses(Scanner in){
 		
 		try {
@@ -78,11 +91,17 @@ class RetailerServant extends RetailerPOA {
 		} 
 	}
 	
+	/* (non-Javadoc)
+	 * @see retailer.RetailerOperations#shutdown()
+	 */
 	@Override
 	public void shutdown() {
 		orb.shutdown(false);
 	}
 
+	/* (non-Javadoc)
+	 * @see retailer.RetailerOperations#getCatalog(int)
+	 */
 	@Override
 	public Item[] getCatalog(int customerReferenceNumber) {
 		HashMap<String, Item> itemsMap = new HashMap<String, Item>();
@@ -114,6 +133,9 @@ class RetailerServant extends RetailerPOA {
 	}
 		
 
+	/* (non-Javadoc)
+	 * @see retailer.RetailerOperations#submitOrder(int, tools.Item[])
+	 */
 	@Override
 	public ItemShippingStatus[] submitOrder(int customerReferenceNumber, Item[] itemOrderArray) {
 		ItemShippingStatusImpl []itemShippingStatusArray = new ItemShippingStatusImpl[0];
@@ -201,6 +223,9 @@ class RetailerServant extends RetailerPOA {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see retailer.RetailerOperations#signUp(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public SignUpResult signUp(String name, String password, String street1,
 			String street2, String city, String state, String zip,
@@ -208,11 +233,17 @@ class RetailerServant extends RetailerPOA {
 		return customerManager.register(name, password, street1, street2, city, state, zip, country);
 	}
 
+	/* (non-Javadoc)
+	 * @see retailer.RetailerOperations#signIn(int, java.lang.String)
+	 */
 	@Override
 	public Customer signIn(int customerReferenceNumber, String password) {
 		return customerManager.find(customerReferenceNumber, password);
 	}
 
+	/* (non-Javadoc)
+	 * @see retailer.RetailerOperations#getProducts(java.lang.String)
+	 */
 	@Override
 	public Item[] getProducts(String productID) {
 		ArrayList<Item> allItems = new ArrayList<Item>();
@@ -236,6 +267,7 @@ class RetailerServant extends RetailerPOA {
 		}
 		return (Item[]) allItems.toArray();
 	}
+	
 	/**
 	 * get a random order for number between 1 to count
 	 * @param count

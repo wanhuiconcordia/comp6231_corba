@@ -11,6 +11,16 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.omg.CORBA.*;
 import org.omg.CORBA.ORBPackage.InvalidName;
 
+/**
+ * @author comp6231.team5
+ * Client side application
+ * Functionalities: 
+ * #sign in
+ * #sign up
+ * #sign out
+ * #get item information
+ * #make orders
+ */
 public class Client
 {
 	private Retailer retailer;
@@ -21,6 +31,13 @@ public class Client
 	private String name;
 	private ArrayList<ItemImpl> retailerItemCatalog;
 
+	
+	/**
+	 * @param args
+	 * initialize orb;
+	 * resolve name service
+	 * @return
+	 */
 	boolean initializeOrbEnvirement(String args[]){
 		// create and initialize the ORB
 		ORB orb = ORB.init(args, null);
@@ -39,12 +56,21 @@ public class Client
 		}
 	}
 
+	
+	/**
+	 * Constructor
+	 */
 	public Client(){
 		name = "client";
 		in = new Scanner(System.in);
 		loggerClient = new LoggerClient();
 		retailerItemCatalog = new ArrayList<ItemImpl>();
 	}
+	
+	/**
+	 * Provide a interface for user to input the retailer's name for connecting
+	 * @return
+	 */
 	public boolean connectRetailer(){
 
 		System.out.print("Please input retailer name to establish connection:");
@@ -64,8 +90,6 @@ public class Client
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-		
 		
 			System.out.println("Failed to resolve retailer:" + retailerName);
 			return false;
@@ -199,6 +223,11 @@ public class Client
 		if(currentCustomer == null){
 			System.out.println("This operation is only allowed for registed user. Please sign in or sign up.");
 		}else{
+			
+			if(retailerItemCatalog.isEmpty()){
+				getCatalog();
+			}
+			
 			String inputString = new String();
 			ArrayList<ItemImpl> itemOrderList = new ArrayList<ItemImpl>();
 			for(ItemImpl itemImpl: retailerItemCatalog){
@@ -250,7 +279,6 @@ public class Client
 			}
 		}
 	}
-
 
 	public static void main(String args[])
 	{

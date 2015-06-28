@@ -18,6 +18,10 @@ import tools.ItemImpl;
 import tools.LoggerClient;
 import tools.Product;
 
+/**
+ * @author comp6231.team5
+ * The servant of warehouse
+ */
 public class WarehouseServant extends WarehousePOA {
 
 	private ORB orb;
@@ -28,6 +32,12 @@ public class WarehouseServant extends WarehousePOA {
 	private ArrayList<String> retailerNameList;
 	private LoggerClient loggerClient;
 	Scanner in ;
+	
+	/**
+	 * Constructor
+	 * @param orb2
+	 * @param name
+	 */
 	public WarehouseServant(ORB orb2,String name){
 		this.orb=orb2;
 		this.name=name;
@@ -67,8 +77,11 @@ public class WarehouseServant extends WarehousePOA {
 		}
 
 	}
+	
+	/**
+	 * replenish the current warehouse, save the update to the corresponding xml file 
+	 */
 	public void replenish(){
-		
 		for(Item item: inventoryManager.inventoryItemMap.values()){
 		System.out.println("entere replenish");
 			if(item.quantity < minimumquantity){
@@ -105,6 +118,12 @@ public class WarehouseServant extends WarehousePOA {
 
 		}
 	}
+	
+	/**
+	 * Provide interface for user to input manufacturers' names for connecting
+	 * @param name
+	 * @return
+	 */
 	public boolean connect(String name){
 		String manufacturename;
 		boolean connected=false;
@@ -144,15 +163,21 @@ public class WarehouseServant extends WarehousePOA {
 		return connected;
 	}
 
-	//@Override
-
+	/**
+	 * Extends the Item array
+	 * @param returnitem
+	 * @param inventoryItem
+	 * @return
+	 */
 	private static  Item[] add(Item[] returnitem, Item inventoryItem) {
-		// TODO Auto-generated method stub
 		returnitem=Arrays.copyOf(returnitem,returnitem.length+1);
 		returnitem[returnitem.length-1]=inventoryItem;
 		return returnitem;
 	}
 	//@Override
+	/* (non-Javadoc)
+	 * @see warehouse.WarehouseOperations#getProductsByType(java.lang.String)
+	 */
 	public Item[] getProductsByType(String productType) {
 		// TODO Auto-generated method stub
 
@@ -168,6 +193,9 @@ public class WarehouseServant extends WarehousePOA {
 	}
 
 	//@Override
+	/* (non-Javadoc)
+	 * @see warehouse.WarehouseOperations#getProductsByRegisteredManufacturers(java.lang.String)
+	 */
 	public Item[] getProductsByRegisteredManufacturers(String manufacturerName) {
 		// TODO Auto-generated method stub
 		Item[] returnitem=new Item[0];
@@ -186,6 +214,9 @@ public class WarehouseServant extends WarehousePOA {
 		return returnitem;
 	}
 
+	/* (non-Javadoc)
+	 * @see warehouse.WarehouseOperations#shippingGoods(tools.Item[])
+	 */
 	public synchronized Item[] shippingGoods(Item[] itemlist) {
 		Item availableItems[]=new Item[0];
 		for(Item item: itemlist){
@@ -222,6 +253,9 @@ public class WarehouseServant extends WarehousePOA {
 
 	}
 	//@Override
+	/* (non-Javadoc)
+	 * @see warehouse.WarehouseOperations#getProducts(java.lang.String, java.lang.String)
+	 */
 	public Item[] getProducts(String productID, String manufacturerName) {
 		// TODO Auto-generated method stub
 
@@ -255,6 +289,9 @@ public class WarehouseServant extends WarehousePOA {
 	}
 
 	//@Override
+	/* (non-Javadoc)
+	 * @see warehouse.WarehouseOperations#registerRetailer(java.lang.String)
+	 */
 	public boolean registerRetailer(String retailerName) {
 		//System.out.println("enter to register the clinet");
 		// TODO Auto-generated method stub
@@ -273,6 +310,9 @@ public class WarehouseServant extends WarehousePOA {
 
 
 	//@Override
+	/* (non-Javadoc)
+	 * @see warehouse.WarehouseOperations#unregisterRegailer(java.lang.String)
+	 */
 	public boolean unregisterRegailer(String regailerName) {
 		// TODO Auto-generated method stub
 		if(regailerName.isEmpty()){
@@ -289,10 +329,16 @@ public class WarehouseServant extends WarehousePOA {
 	}
 
 
+	/* (non-Javadoc)
+	 * @see warehouse.WarehouseOperations#getName()
+	 */
 	public String getName() {
 		// TODO Auto-generated method stub
 		return name;
 	}
+	/* (non-Javadoc)
+	 * @see warehouse.WarehouseOperations#shutdown()
+	 */
 	@Override
 	public void shutdown() {
 		// TODO Auto-generated method stub
@@ -302,6 +348,9 @@ public class WarehouseServant extends WarehousePOA {
 			System.out.println(name + " is shut down propperly.");
 		}
 	}
+	/* (non-Javadoc)
+	 * @see warehouse.WarehouseOperations#getProductsByID(java.lang.String)
+	 */
 	@Override
 
 	public Item[] getProductsByID(String productID) {

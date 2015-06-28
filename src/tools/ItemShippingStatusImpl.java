@@ -1,5 +1,9 @@
 package tools;
 
+/**
+ * @author comp6231.team5
+ * The implementation of ItemShippingStatus
+ */
 public class ItemShippingStatusImpl extends ItemShippingStatus {
 	public ItemShippingStatusImpl(){
 
@@ -19,6 +23,14 @@ public class ItemShippingStatusImpl extends ItemShippingStatus {
 		this.shippingStatus = shippingStatus;
 	}
 	
+	/**
+	 * Constructor
+	 * @param manufacturerName
+	 * @param productType
+	 * @param unitPrice
+	 * @param quantity
+	 * @param shippingStatus
+	 */
 	public ItemShippingStatusImpl(String manufacturerName,
 			String productType,
 			float unitPrice,
@@ -33,6 +45,15 @@ public class ItemShippingStatusImpl extends ItemShippingStatus {
 		this.shippingStatus = shippingStatus;
 	}
 
+	/**
+	 * Constructor
+	 * @param productID
+	 * @param manufacturerName
+	 * @param productType
+	 * @param unitPrice
+	 * @param quantity
+	 * @param shippingStatus
+	 */
 	public ItemShippingStatusImpl(String productID,
 			String manufacturerName,
 			String productType,
@@ -48,6 +69,10 @@ public class ItemShippingStatusImpl extends ItemShippingStatus {
 		this.shippingStatus = shippingStatus;
 	}
 
+	/**
+	 * Constructor
+	 * @param itemShippingStatus
+	 */
 	public ItemShippingStatusImpl(ItemShippingStatus itemShippingStatus){
 		this.productID = itemShippingStatus.productID;
 		this.manufacturerName = itemShippingStatus.manufacturerName;
@@ -57,6 +82,9 @@ public class ItemShippingStatusImpl extends ItemShippingStatus {
 		this.shippingStatus = itemShippingStatus.shippingStatus;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString(){
 		return productID
 				+ ", " + manufacturerName

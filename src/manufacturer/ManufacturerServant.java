@@ -16,6 +16,10 @@ import tools.ProductImpl;
 import tools.PurchaseOrderManager;
 import tools.XmlFileController;
 
+/**
+ * @author comp6231.team5
+ * Provide services for warehouses
+ */
 public class ManufacturerServant extends ManufacturerPOA{
 
 	private static final long serialVersionUID = 1L;
@@ -29,6 +33,12 @@ public class ManufacturerServant extends ManufacturerPOA{
 	Random random ; 
 
 
+	/**
+	 * Constructor
+	 * @param orb
+	 * @param name
+	 * @param loggerClient
+	 */
 	public ManufacturerServant(ORB orb, String name,LoggerClient loggerClient) {
 		this.Orb = orb;
 		this.name = name;
@@ -41,8 +51,10 @@ public class ManufacturerServant extends ManufacturerPOA{
 		System.out.println("ManufacturerImplementation constructed:" + name);
 	}
 
+	/* (non-Javadoc)
+	 * @see manufacturer.ManufacturerOperations#processPurchaseOrder(tools.Item)
+	 */
 	public String processPurchaseOrder(Item item) {
-
 		impl = new ItemImpl(item);
 		if(!impl.manufacturerName.equals(name)){
 			System.out.println(name + ": Manufacturer name is not equal to current manufacturer name:" + impl.manufacturerName);
@@ -58,10 +70,10 @@ public class ManufacturerServant extends ManufacturerPOA{
 				loggerClient.write(name + ": The order price (" + impl.unitPrice + ") is lower than defined price(" + availableItem.unitPrice + ")");
 				return null;
 			}else{
-				if(impl.getQuantity() >= availableItem.getQuantity()){
+				if(impl.quantity >= availableItem.quantity){
 					int oneTimeQuantity = 100;
 					if(produce(impl.productType, oneTimeQuantity)){
-						availableItem.setQuantity(availableItem.getQuantity() + oneTimeQuantity);
+						availableItem.quantity = availableItem.quantity + oneTimeQuantity;
 
 						purchaseOrderManager.saveItems();
 
@@ -72,7 +84,7 @@ public class ManufacturerServant extends ManufacturerPOA{
 					}
 				}
 
-				if(impl.getQuantity() >= availableItem.getQuantity()){
+				if(impl.quantity >= availableItem.quantity){
 					return null;
 				}else{
 					String orderNumString = new Integer(orderNum++).toString();
@@ -95,6 +107,9 @@ public class ManufacturerServant extends ManufacturerPOA{
 	}
 
 
+	/* (non-Javadoc)
+	 * @see manufacturer.ManufacturerOperations#getProductInfo(java.lang.String)
+	 */
 	@Override
 	public Product getProductInfo(String productType) {
 		ItemImpl avaiableItem = purchaseOrderManager.itemsMap.get(productType);
@@ -107,6 +122,9 @@ public class ManufacturerServant extends ManufacturerPOA{
 	}
 
 
+	/* (non-Javadoc)
+	 * @see manufacturer.ManufacturerOperations#receivePayment(java.lang.String, float)
+	 */
 	@Override
 	public boolean receivePayment(String orderNum, float totalPrice) {
 		ItemImpl waitingForPayItem = purchaseOrderMap.get(orderNum);
@@ -114,9 +132,9 @@ public class ManufacturerServant extends ManufacturerPOA{
 			loggerClient.write(name + ": " + orderNum + " does not exist in purchaseOrderMap of current manufacturer!");
 			return false;
 		}else{
-			if(waitingForPayItem.getQuantity() * waitingForPayItem.unitPrice == totalPrice){
+			if(waitingForPayItem.quantity * waitingForPayItem.unitPrice == totalPrice){
 				ItemImpl inhandItem = purchaseOrderManager.itemsMap.get(waitingForPayItem.productType);
-				inhandItem.setQuantity(inhandItem.getQuantity() - waitingForPayItem.getQuantity());
+				inhandItem.quantity = inhandItem.quantity - waitingForPayItem.quantity;
 				purchaseOrderManager.saveItems();
 				loggerClient.write(name + ": received pament. OrderNum:" + orderNum + ", totalPrice:" + totalPrice);
 				purchaseOrderMap.remove(orderNum);
@@ -136,6 +154,9 @@ public class ManufacturerServant extends ManufacturerPOA{
 	}
 
 
+	/* (non-Javadoc)
+	 * @see manufacturer.ManufacturerOperations#getProductList()
+	 */
 	@Override
 	public Product[] getProductList() {
 		ArrayList<Product> productList = new ArrayList<Product>();
@@ -194,6 +215,9 @@ public class ManufacturerServant extends ManufacturerPOA{
 
 	}
 
+	/* (non-Javadoc)
+	 * @see manufacturer.ManufacturerOperations#shutdown()
+	 */
 	@Override
 	public void shutdown() {
 		Orb.shutdown(false);

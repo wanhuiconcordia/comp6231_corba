@@ -13,6 +13,11 @@ import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
+/**
+ * @author comp6231.team5
+ * Provide services for client
+ * Ask for items and get item information from warehouses
+ */
 public class RetailerServer {
 
 	private ORB orb;
@@ -22,12 +27,22 @@ public class RetailerServer {
 	private Scanner in;
 	private LoggerClient loggerClient;
 
+	/**
+	 * Constructor
+	 */
 	public RetailerServer(){
 		name = new String();
 		in = new Scanner(System.in);
 		loggerClient = new LoggerClient();
 	}
 
+	/**
+	 * @param args
+	 * initialize orb;
+	 * resolve name service
+	 * provide interface for user to input retailer's name
+	 * @return
+	 */
 	boolean initializeOrbEnvirement(String args[]){
 		// create and initialize the ORB
 		orb = ORB.init(args, null);
@@ -83,6 +98,10 @@ public class RetailerServer {
 	}
 
 
+	/**
+	 * Main
+	 * @param args
+	 */
 	public static void main(String args[]) {
 		RetailerServer retailerServer = new RetailerServer();
 		if(!retailerServer.initializeOrbEnvirement(args)){
