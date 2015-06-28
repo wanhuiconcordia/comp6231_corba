@@ -54,7 +54,7 @@ public class ManufacturerServant extends ManufacturerPOA{
 	/* (non-Javadoc)
 	 * @see manufacturer.ManufacturerOperations#processPurchaseOrder(tools.Item)
 	 */
-	public String processPurchaseOrder(Item item) {
+	public synchronized String processPurchaseOrder(Item item) {
 		impl = new ItemImpl(item);
 		if(!impl.manufacturerName.equals(name)){
 			System.out.println(name + ": Manufacturer name is not equal to current manufacturer name:" + impl.manufacturerName);
@@ -126,7 +126,7 @@ public class ManufacturerServant extends ManufacturerPOA{
 	 * @see manufacturer.ManufacturerOperations#receivePayment(java.lang.String, float)
 	 */
 	@Override
-	public boolean receivePayment(String orderNum, float totalPrice) {
+	public synchronized boolean receivePayment(String orderNum, float totalPrice) {
 		ItemImpl waitingForPayItem = purchaseOrderMap.get(orderNum);
 		if(waitingForPayItem == null){
 			loggerClient.write(name + ": " + orderNum + " does not exist in purchaseOrderMap of current manufacturer!");

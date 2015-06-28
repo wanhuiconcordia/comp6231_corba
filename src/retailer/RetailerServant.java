@@ -137,7 +137,7 @@ class RetailerServant extends RetailerPOA {
 	 * @see retailer.RetailerOperations#submitOrder(int, tools.Item[])
 	 */
 	@Override
-	public ItemShippingStatus[] submitOrder(int customerReferenceNumber, Item[] itemOrderArray) {
+	public synchronized ItemShippingStatus[] submitOrder(int customerReferenceNumber, Item[] itemOrderArray) {
 		ItemShippingStatusImpl []itemShippingStatusArray = new ItemShippingStatusImpl[0];
 		Customer currentCustomer = customerManager.getCustomerByReferenceNumber(customerReferenceNumber);
 		if(currentCustomer == null){
